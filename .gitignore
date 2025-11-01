@@ -1,5 +1,11 @@
 # exclude tools
-tools/
+tools/*
+# except patches folder
+!tools/asar191/
+tools/asar191/*
+!tools/asar191/patches/
+!tools/asar191/patches/*
 
-# exclude roms
+# exclude roms and executables
 *.smc
+*.exe
