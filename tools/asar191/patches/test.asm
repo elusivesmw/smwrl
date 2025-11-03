@@ -19,8 +19,18 @@ nop
 freecode
 get_height:
 lda.l jump_height,x
+pha
+txa
+bit #$01
+pla
+bne .odd
+.even
 clc : adc !offset_normal
-sta !debug_out
+bra +
+.odd
+clc : adc !offset_spin
++
+sta !debug_out ; todo: remove this
 .return
 sta $7d
 jml $00D667
