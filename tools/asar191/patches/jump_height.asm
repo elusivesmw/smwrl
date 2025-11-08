@@ -5,9 +5,9 @@
 !jump_spin   = !freeram+1
 !debug_out = !freeram+2
 
-; offset from vanilla table
-!offset_normal = 7
-!offset_spin = 7
+; offset from vanilla table (initial nerf amount)
+!offset_normal = 16
+!offset_spin = 10
 
 
 ; index based on speed
@@ -31,21 +31,23 @@ bit #$01
 bne .odd
 .even:
 pla
-clc : adc !jump_normal
+sec : sbc !jump_normal
 bra +
 .odd:
 pla
-clc : adc !jump_spin
+sec : sbc !jump_spin
 +
 sta !debug_out ; todo: remove this
-.return
+bpl .return
+.save
 sta $7d
+.return
 jml $00D667
 
 
 jump_height:
-db $B0+!offset_normal,$B6+!offset_spin,$AE+!offset_normal,$B4+!offset_spin,$AB+!offset_normal,$B2+!offset_spin,$A9+!offset_normal,$B0
-db $A6+!offset_normal,$AE+!offset_spin,$A4+!offset_normal,$AB+!offset_spin,$A1+!offset_normal,$A9+!offset_spin,$9F+!offset_normal,$A6
+db $B0+!offset_normal,$B6+!offset_spin,$AE+!offset_normal,$B4+!offset_spin,$AB+!offset_normal,$B2+!offset_spin,$A9+!offset_normal,$B0+!offset_spin
+db $A6+!offset_normal,$AE+!offset_spin,$A4+!offset_normal,$AB+!offset_spin,$A1+!offset_normal,$A9+!offset_spin,$9F+!offset_normal,$A6+!offset_spin
 
 ; TODO: handle boost jump heights also
 
