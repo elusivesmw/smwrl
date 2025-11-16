@@ -1,10 +1,3 @@
-!freeram = $7FA200;
-
-; vars
-!jump_normal = !freeram
-!jump_spin   = !freeram+1
-!debug_out = !freeram+2
-
 ; offset from vanilla table (initial nerf amount)
 !offset_normal = 16
 !offset_spin = 10

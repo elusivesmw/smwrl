@@ -1,2 +1,1 @@
-patches\jump_height.asm
-patches\ability_carry.asm
+patches\rogue.asm

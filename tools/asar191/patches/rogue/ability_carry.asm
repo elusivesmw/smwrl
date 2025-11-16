@@ -1,8 +1,3 @@
-!freeram = $7FA200;
-
-; vars
-!ability_carry = !freeram+3
-
 ; disable carrying sprites
 org $01AA5E
     autoclean jml disable_carry 
