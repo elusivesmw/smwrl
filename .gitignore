@@ -7,7 +7,7 @@ tools/asar191/*
 !tools/asar191/patches/
 !tools/asar191/patches/*
 
-## except uberasm
+## except uberasm/retry
 !tools/UberASMTool21/
 tools/UberASMTool21/*
 !tools/UberASMTool21/gamemode/
@@ -16,6 +16,8 @@ tools/UberASMTool21/*
 !tools/UberASMTool21/level/*
 !tools/UberASMTool21/library/
 !tools/UberASMTool21/library/*
+!tools/UberASMTool21/retry_config
+!tools/UberASMTool21/retry_config/*
 
 ## except blocks
 !tools/GPS(V1.4.5)/
