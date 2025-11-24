@@ -173,7 +173,7 @@
 ; 1 = play the full death animation before showing the Retry prompt (note: make sure !fast_prompt = 0)
 ; 2 = play the full death animation before reloading the level with instant Retry
 ; 3 = play the full death animation in both cases (effects 1 and 2)
-    !retry_death_animation = 0
+    !retry_death_animation = 3
 
 ; How many frames after dying the prompt shows up when using !fast_prompt = 0 and !retry_death_animation = 0
     !prompt_show_delay = $30
@@ -282,14 +282,14 @@
 
 ; If 1, a sprite status bar will be installed allowing you to display the item box, coins, Yoshi coins,
 ; timer, lives and bonus stars using sprite tiles, which keeps layer 3 working properly.
-    !sprite_status_bar = 0
+    !sprite_status_bar = 1
 
 ; If 1, it disables the original game's status bar (including the IRQ) which prevents layer 3 from messing up.
 ; Differently than the normal remove status bar patch, this keeps the status bar functions (lives, coins,
 ; bonus stars, score, timer, reserve item) running in the background.
 ; Suggested to use if you're using !sprite_status_bar = 1.
 ; Don't use this if you're using similar patches such as "RAM Toggled Status Bar".
-    !remove_vanilla_status_bar = 0
+    !remove_vanilla_status_bar = 1
 
 ; Default sprite tile and palette to use for each element in the status bar.
 ; These settings can be overridden per-level by using the "configure_sprite_status_bar" API routine (see "docs/api.html").
@@ -324,7 +324,7 @@
 ; If 1, the item box will always be drawn (if set to be drawn for the specific level).
 ; Otherwise, it will only be drawn when having an item in reserve.
 ; This is only relevant if !sprite_status_bar = 1.
-    !always_draw_box = 1
+    !always_draw_box = 0
 
 ; If 1, the item box will use an 8x8 tile instead of a 16x16 tile.
 ; This is only relevant if !sprite_status_bar = 1.

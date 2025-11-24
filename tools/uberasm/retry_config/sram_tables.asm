@@ -18,11 +18,15 @@
 ;       Additionally, a lot of other addresses might be remapped to different locations (see SA-1 docs for more info).
 ; Note: if using FastROM, using $000000-$001FFF instead of $7E0000-$7E1FFF will make the save/load process a bit faster.
 
+!ram_rogue = $7FA200
+
 save:
     dl !ram_checkpoint    : dw 192
     ; Feel free to add your own stuff here.
-    
-    
+
+    ; rogue: let's just go overkill here
+    dl !ram_rogue         : dw 128
+
 
 .not_game_over:
     dl !ram_death_counter : dw 5
@@ -52,8 +56,24 @@ sram_defaults:
     dw $012C,$012D,$012E,$012F,$0130,$0131,$0132,$0133
     dw $0134,$0135,$0136,$0137,$0138,$0139,$013A,$013B
     ; Feel free to add your own stuff here.
-    
-    
+
+    ; rogue: let's just go overkill here
+    db $00,$00,$00,$01,$00,$00,$00,$00 ; 00-07
+    db $00,$00,$00,$00,$00,$00,$00,$00 ; 07-0f
+    db $00,$00,$00,$01,$00,$00,$00,$00 ; 10-17
+    db $00,$00,$00,$00,$00,$00,$00,$00 ; 17-1f
+    db $00,$00,$00,$01,$00,$00,$00,$00 ; 20-27
+    db $00,$00,$00,$00,$00,$00,$00,$00 ; 27-2f
+    db $00,$00,$00,$01,$00,$00,$00,$00 ; 30-37
+    db $00,$00,$00,$00,$00,$00,$00,$00 ; 37-3f
+    db $00,$00,$00,$01,$00,$00,$00,$00 ; 40-47
+    db $00,$00,$00,$00,$00,$00,$00,$00 ; 47-4f
+    db $00,$00,$00,$01,$00,$00,$00,$00 ; 50-57
+    db $00,$00,$00,$00,$00,$00,$00,$00 ; 57-5f
+    db $00,$00,$00,$01,$00,$00,$00,$00 ; 60-67
+    db $00,$00,$00,$00,$00,$00,$00,$00 ; 67-6f
+    db $00,$00,$00,$01,$00,$00,$00,$00 ; 70-77
+    db $00,$00,$00,$00,$00,$00,$00,$00 ; 77-7f
 
 .not_game_over:
     ; Initial death counter value (don't edit this!).
