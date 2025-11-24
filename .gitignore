@@ -2,29 +2,29 @@
 tools/*
 
 ## except patches
-!tools/asar191/
-tools/asar191/*
-!tools/asar191/patches/
-!tools/asar191/patches/*
+!tools/asar/
+tools/asar/*
+!tools/asar/patches/
+!tools/asar/patches/*
 
 ## except uberasm/retry
-!tools/UberASMTool21/
-tools/UberASMTool21/*
-!tools/UberASMTool21/gamemode/
-!tools/UberASMTool21/gamemode/*
-!tools/UberASMTool21/level/
-!tools/UberASMTool21/level/*
-!tools/UberASMTool21/library/
-!tools/UberASMTool21/library/*
-!tools/UberASMTool21/retry_config
-!tools/UberASMTool21/retry_config/*
+!tools/uberasm/
+tools/uberasm/*
+!tools/uberasm/gamemode/
+!tools/uberasm/gamemode/*
+!tools/uberasm/level/
+!tools/uberasm/level/*
+!tools/uberasm/library/
+!tools/uberasm/library/*
+!tools/uberasm/retry_config
+!tools/uberasm/retry_config/*
 
 ## except blocks
-!tools/GPS(V1.4.5)/
-tools/GPS(V1.4.5)/*
-!tools/GPS(V1.4.5)/blocks/
-!tools/GPS(V1.4.5)/blocks/*
-tools/GPS(V1.4.5)/blocks/template.asm
+!tools/gps/
+tools/gps/*
+!tools/gps/blocks/
+!tools/gps/blocks/*
+tools/gps/blocks/template.asm
 
 # exclude roms and executables
 *.smc
