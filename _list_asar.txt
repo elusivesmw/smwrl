@@ -1,1 +1,2 @@
 patches\rogue.asm
+patches\presents_palette.asm
