@@ -9,12 +9,10 @@ JMP TopCorner : JMP BodyInside : JMP HeadInside
 ; JMP WallFeet : JMP WallBody ; when using db $37
 
 MarioBelow:
-
-; TODO: fix this
-;lda #$00 ; sprite num
-;ldx #$07 ; tile after
-;ldy #$00 ; direction
-;%spawn_bounce_sprite()
+%shatter_block()
+; end bonus game
+lda #$44
+sta $14AB
 
 ; add height to spin jump
 lda !spin_jump
