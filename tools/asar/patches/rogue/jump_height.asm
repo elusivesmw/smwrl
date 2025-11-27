@@ -33,6 +33,7 @@ freecode
 spin_jump:
 ; is spin jump enabled?
 lda !jump_flags
+beq .no_jump
 and #02 ; spin jump enabled flag
 beq .normal
 .spin
@@ -46,17 +47,20 @@ jml $00D649
 lda #01   ; restore og normal jump code 
 sta $1DFA ; before jumping back
 jml $00D663; right after normal jump hijack
+.no_jump
+jml $00D61E ; skip jumping code
 
 ; ----
 
 normal_jump:
 ; is normal jump enabled?
 lda !jump_flags
-and #01 ; normal jump flag
+beq .no_jump
+and #$01 ; normal jump flag
 beq .spin
 .normal
 ; original code
-lda #01   ; len 3
+lda #$01   ; len 3
 sta $1DFA ; len 3
 .return
 jml $00D663
@@ -64,7 +68,8 @@ jml $00D663
 lda #$01  ; restore og spin jump code 
 sta $140D ; before jumping back
 jml $00D649 ; right after spin jump hijack
-
+.no_jump
+jml $00D61E ; skip jumping code
 ; ----
 
 get_height:
