@@ -1,5 +1,5 @@
 !freeram = $7FA200
-!normal_jump = !freeram
+!normal_jump = !freeram+1
 !max_inc = 32 ; don't allow jump increase past a certain point
 
 ; bonus game flag at $7E1425

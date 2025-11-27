@@ -2,7 +2,9 @@
 !freeram = $7FA200;
 
 ; vars
-!jump_normal = !freeram
-!jump_spin   = !freeram+1
-!debug_out = !freeram+2
+!jump_flags = !freeram
+!jump_normal = !freeram+1
+!jump_spin   = !freeram+2
 !ability_carry = !freeram+3
+
+!debug_out = !freeram+16

@@ -1,5 +1,5 @@
 !freeram = $7FA200
-!spin_jump = !freeram+1
+!spin_jump = !freeram+2
 !max_inc = 32 ; don't allow jump increase past a certain point
 
 db $42 ; or db $37

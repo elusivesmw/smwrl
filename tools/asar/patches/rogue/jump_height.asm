@@ -1,7 +1,19 @@
+; jump flags
+; 00 - none
+; 01 - normal
+; 02 - spin
+; 03 - both
+
+org $00D645
+autoclean jml spin_jump
+
+org $00D65E
+autoclean jml normal_jump
+nop #2
+
 ; offset from vanilla table (initial nerf amount)
 !offset_normal = 16
 !offset_spin = 10
-
 
 ; index based on speed
 ; even - normal jump
@@ -9,12 +21,51 @@
 
 ; params: X contains table index based on speed and jump type
 ; return: A with mario's jump height
-org $00D663
 
+org $00D663
 autoclean jml get_height
 nop
 
 freecode
+
+; ----
+
+spin_jump:
+; is spin jump enabled?
+lda !jump_flags
+and #02 ; spin jump enabled flag
+beq .normal
+.spin
+; original code
+;inc      ; len 1, set spin jumping flag	
+lda #$01  ; inc replaced with this, since A is clobbered
+sta $140D ; len 3
+.return
+jml $00D649
+.normal
+lda #01   ; restore og normal jump code 
+sta $1DFA ; before jumping back
+jml $00D663; right after normal jump hijack
+
+; ----
+
+normal_jump:
+; is normal jump enabled?
+lda !jump_flags
+and #01 ; normal jump flag
+beq .spin
+.normal
+; original code
+lda #01   ; len 3
+sta $1DFA ; len 3
+.return
+jml $00D663
+.spin
+lda #$01  ; restore og spin jump code 
+sta $140D ; before jumping back
+jml $00D649 ; right after spin jump hijack
+
+; ----
 
 get_height:
 lda.l jump_height,x
@@ -22,11 +73,11 @@ pha
 txa
 bit #$01
 bne .odd
-.even:
+.even
 pla
 sec : sbc !jump_normal
 bra +
-.odd:
+.odd
 pla
 sec : sbc !jump_spin
 +
@@ -37,10 +88,11 @@ sta $7d
 .return
 jml $00D667
 
-
 jump_height:
 db $B0+!offset_normal,$B6+!offset_spin,$AE+!offset_normal,$B4+!offset_spin,$AB+!offset_normal,$B2+!offset_spin,$A9+!offset_normal,$B0+!offset_spin
 db $A6+!offset_normal,$AE+!offset_spin,$A4+!offset_normal,$AB+!offset_spin,$A1+!offset_normal,$A9+!offset_spin,$9F+!offset_normal,$A6+!offset_spin
+
+; ----
 
 ; TODO: handle boost jump heights also
 
