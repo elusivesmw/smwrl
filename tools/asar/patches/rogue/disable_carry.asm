@@ -13,13 +13,13 @@ freecode
 disable_carry:
     lda $1470
     ora $187A
-    ora !ability_carry
+    ora !disable_carry
     ; return
     jml $01AA64
 
 disable_throwblock:
     lda $148F
     ora $187A
-    ora !ability_carry
+    ora !disable_carry
     ; return
     jml $00F275
