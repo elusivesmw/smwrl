@@ -15,11 +15,11 @@
 ;======================== QoL and Anti-Break ============================;
 
 ; How many lives to start a new save file with.
-    !initial_lives = 99
+    !initial_lives = 5
 
 ; If 1, lives won't decrement when dying.
 ; Note: if 0, you can choose to have infinite lives in specific sublevels using the "no_lose_lives" option in "settings_local.asm".
-    !infinite_lives = 1
+    !infinite_lives = 0
 
 ; 0 = midways won't give Mario a mushroom.
 ; 1 = vanilla midway powerup behavior.
@@ -30,9 +30,9 @@
 ; Useful for Kaizo and collab hacks. For lives, they will be reset to !initial_lives
 ; 0 = disabled, 1 = enabled for both respawning and going to the Overworld
 ; 2 = enabled just for respawning, 3 = enabled just for going to the Overworld
-    !counterbreak_yoshi = 1
-    !counterbreak_powerup = 1
-    !counterbreak_item_box = 1
+    !counterbreak_yoshi = 0
+    !counterbreak_powerup = 0
+    !counterbreak_item_box = 0
     !counterbreak_coins = 0
     !counterbreak_bonus_stars = 0
     !counterbreak_score = 0
