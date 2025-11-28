@@ -5,11 +5,11 @@
 ; 03 - both
 
 org $00D645
-autoclean jml spin_jump
+    autoclean jml try_spin_jump
 
 org $00D65E
-autoclean jml normal_jump
-nop #2
+    autoclean jml try_normal_jump
+    nop #2
 
 ; offset from vanilla table (initial nerf amount)
 !offset_normal = 16
@@ -23,79 +23,70 @@ nop #2
 ; return: A with mario's jump height
 
 org $00D663
-autoclean jml get_height
-nop
+    autoclean jml get_height
+    nop
 
 freecode
 
 ; ----
 
-spin_jump:
-; is spin jump enabled?
-lda !jump_flags
-beq .no_jump
-and #02 ; spin jump enabled flag
-beq .normal
-.spin
-; original code
-;inc      ; len 1, set spin jumping flag	
-lda #$01  ; inc replaced with this, since A is clobbered
-sta $140D ; len 3
-.return
-jml $00D649
-.normal
-lda #01   ; restore og normal jump code 
-sta $1DFA ; before jumping back
-jml $00D663; right after normal jump hijack
-.no_jump
-jml $00D61E ; skip jumping code
+try_spin_jump:
+    lda !jump_flags
+    ; is any jump enabled?
+    beq no_jump
+    ; is spin jump enabled?
+    and #02 : beq normal
+do_spin_jump:
+    ; slightly modified original code
+    lda #$01 : sta $140D
+    ; return
+    jml $00D649
+normal:
+    jml do_normal_jump
 
-; ----
+try_normal_jump:
+    lda !jump_flags
+    ; is any jump enabled?
+    beq no_jump
+    ; is normal jump enabled?
+    and #$01 : beq spin
+do_normal_jump:
+    ; original code
+    lda #$01 : sta $1DFA
+    ; return
+    jml $00D663
+spin:
+    jml do_spin_jump
 
-normal_jump:
-; is normal jump enabled?
-lda !jump_flags
-beq .no_jump
-and #$01 ; normal jump flag
-beq .spin
-.normal
-; original code
-lda #$01   ; len 3
-sta $1DFA ; len 3
-.return
-jml $00D663
-.spin
-lda #$01  ; restore og spin jump code 
-sta $140D ; before jumping back
-jml $00D649 ; right after spin jump hijack
-.no_jump
-jml $00D61E ; skip jumping code
+no_jump:
+    jml $00D61E ; skip jumping code
+
 ; ----
 
 get_height:
-lda.l jump_height,x
-pha
-txa
-bit #$01
-bne .odd
+    lda.l jump_height,x
+    pha
+    txa
+    bit #$01
+    bne .odd
 .even
-pla
-sec : sbc !jump_normal
-bra +
+    pla
+    sec : sbc !jump_normal
+    bra +
 .odd
-pla
-sec : sbc !jump_spin
+    pla
+    sec : sbc !jump_spin
 +
-sta !debug_out ; todo: remove this
-bpl .return
-.save
-sta $7d
+    sta !debug_out ; TODO: remove
+    bpl .return
+    ; save
+    sta $7d
 .return
-jml $00D667
+    jml $00D667
 
 jump_height:
-db $B0+!offset_normal,$B6+!offset_spin,$AE+!offset_normal,$B4+!offset_spin,$AB+!offset_normal,$B2+!offset_spin,$A9+!offset_normal,$B0+!offset_spin
-db $A6+!offset_normal,$AE+!offset_spin,$A4+!offset_normal,$AB+!offset_spin,$A1+!offset_normal,$A9+!offset_spin,$9F+!offset_normal,$A6+!offset_spin
+    db $B0+!offset_normal,$B6+!offset_spin,$AE+!offset_normal,$B4+!offset_spin,$AB+!offset_normal,$B2+!offset_spin,$A9+!offset_normal,$B0+!offset_spin
+    db $A6+!offset_normal,$AE+!offset_spin,$A4+!offset_normal,$AB+!offset_spin,$A1+!offset_normal,$A9+!offset_spin,$9F+!offset_normal,$A6+!offset_spin
 
 ; ----
 
