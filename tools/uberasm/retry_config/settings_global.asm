@@ -15,7 +15,7 @@
 ;======================== QoL and Anti-Break ============================;
 
 ; How many lives to start a new save file with.
-    !initial_lives = 5
+    !initial_lives = 1
 
 ; If 1, lives won't decrement when dying.
 ; Note: if 0, you can choose to have infinite lives in specific sublevels using the "no_lose_lives" option in "settings_local.asm".
@@ -147,7 +147,7 @@
 ; This can be useful when paired with the option of not reloading some data from SRAM after a game over (see "sram_tables.asm"),
 ; if you want some things to retain even if the player got a game over before saving them (for example, the death counter).
 ; This ensures that they will be saved to SRAM when this happens.
-    !save_after_game_over = 1
+    !save_after_game_over = 0
 
 ;======================== Custom Midways ================================;
 

@@ -1,6 +1,7 @@
 ; dependecies
 incsrc "presents_palette.asm"
 incsrc "one_player.asm"
+incsrc "permadeath.asm"
 
 ; ram defines
 incsrc "rogue/ram.asm"
