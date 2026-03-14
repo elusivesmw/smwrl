@@ -1,0 +1,37 @@
+﻿{
+  "projectPath": "C:\\Users\\jay\\OneDrive\\Romhacking\\Projects\\smwrl",
+  "inputRom": "levels.smc",
+  "outputRom": "patched.smc",
+  "emulator": {
+    "exe": "C:\\Users\\jay\\OneDrive\\Romhacking\\Emulators\\Mesen_2.1.1_Windows\\mesen.exe",
+    "args": ""
+  },
+  "addmusick": {
+    "exe": "tools\\addmusick\\AddmusicK.exe",
+    "args": ""
+  },
+  "gps": {
+    "exe": "tools\\gps\\gps.exe",
+    "args": "",
+    "listFile": "..\\..\\_list_gps.txt"
+  },
+  "pixi": {
+    "exe": "tools\\pixi\\pixi.exe",
+    "args": "",
+    "listFile": "_list_pixi.txt"
+  },
+  "uberasm": {
+    "exe": "tools\\uberasm\\UberASMTool.exe",
+    "args": "",
+    "listFile": "..\\..\\_list_uberasm.txt"
+  },
+  "asar": {
+    "exe": "tools\\asar\\asar.exe",
+    "args": "--pause-mode=on-warning",
+    "listFile": "..\\..\\_list_asar.txt"
+  },
+  "flips": {
+    "exe": "tools\\flips\\flips.exe",
+    "args": ""
+  }
+}

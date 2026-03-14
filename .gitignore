@@ -26,6 +26,13 @@ tools/gps/*
 !tools/gps/blocks/*
 tools/gps/blocks/template.asm
 
+## except sprites
+!tools/pixi/
+tools/pixi/*
+!tools/pixi/sprites/
+!tools/pixi/sprites/*
+tools/pixi/sprites/_header.asm
+
 # exclude roms and executables
 *.smc
 *.exe
