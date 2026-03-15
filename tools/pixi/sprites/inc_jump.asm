@@ -2,6 +2,9 @@
 !normal_jump = !freeram+1
 !max_inc = 32 ; don't allow jump increase past a certain point
 
+!tile_num_1 = $80
+!tile_num_2 = $A0
+
 !sound_effect = $1C
 !sound_bank = $1DF9
 
@@ -66,19 +69,25 @@ graphics:
     ; X position
     lda $00
     sta $0300,y
+    sta $0304,y
     ; Y position
     lda $01
     sta $0301,y
-    ; tile number
-    lda #$24
+    clc : adc #$10
+    sta $0305,y
+    ; tile numbers
+    lda #!tile_num_1
     sta $0302,y
-    lda $15F6,x
+    lda #!tile_num_2
+    sta $0306,y
     ; properties
+    lda $15F6,x
     ora $64
     sta $0303,y
+    sta $0307,y
     
     ; finish oam write
-    lda #$00 ; number tiles to draw - 1
+    lda #$01 ; number tiles to draw - 1
     ldy #$02 ; tile size
     jsl $01B7B3
 rts
