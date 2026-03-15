@@ -49,7 +49,7 @@
     "Don't turn into a coin with silver POW": true,
     "Don't get stuck in walls (carryable sprites)": false
   },
-  "AsmFile": "test.asm",
+  "AsmFile": "inc_jump.asm",
   "ActLike": 120,
   "Type": 1,
   "Extra Property Byte 1": 1,
@@ -61,7 +61,7 @@
     {
       "X": 0,
       "Y": 0,
-      "Description": "Test (description)",
+      "Description": "Increments jump height",
       "ExtraBit": false,
       "Tiles": [
         {
@@ -77,7 +77,7 @@
   ],
   "Collection": [
     {
-      "Name": "Test (name)",
+      "Name": "Increments jump height",
       "ExtraBit": false,
       "Extra Property Byte 1": 0,
       "Extra Property Byte 2": 0,
