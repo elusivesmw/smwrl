@@ -1,3 +1,5 @@
+!this_sprite_num = $AF
+
 !freeram = $7FA200
 !normal_jump = !freeram+1
 !max_inc = 32 ; don't allow jump increase past a certain point
@@ -47,8 +49,6 @@ main:
     ; remove sprite
     stz $14C8,x
 
-    ; TODO: remove other powerup sprites
-
     ; spawn smoke
     stz $00 : stz $01
     lda #$1B : sta $02
@@ -58,6 +58,9 @@ main:
     ; play sounds effect
     lda #!sound_effect
     sta !sound_bank
+
+    ; remove other powerup sprites
+    jsr remove_others
 
 return:
 rts
@@ -90,4 +93,21 @@ graphics:
     lda #$01 ; number tiles to draw - 1
     ldy #$02 ; tile size
     jsl $01B7B3
+rts
+
+remove_others:
+    phx
+    ldx #$0B
+-
+    lda $14C8,x
+    beq +
+    lda $7FAB9E,x
+    cmp #!this_sprite_num
+    bne +
+    ; remove this sprite
+    stz $14C8,x
+    ; TODO: spawn poof
++
+    dex : bpl -
+    plx
 rts
