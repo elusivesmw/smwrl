@@ -7,9 +7,6 @@
 !tile_num_1 = $80
 !tile_num_2 = $A0
 
-!sound_effect = $1C
-!sound_bank = $1DF9
-
 print "INIT ",pc
 rtl
 
@@ -48,16 +45,14 @@ main:
 
     ; remove sprite
     stz $14C8,x
-
-    ; spawn smoke
+    ; spawn glitter
     stz $00 : stz $01
     lda #$1B : sta $02
     lda #$05
     %SpawnSmoke()
-
     ; play sounds effect
-    lda #!sound_effect
-    sta !sound_bank
+    lda #$1C
+    sta $1DF9
 
     ; remove other powerup sprites
     jsr remove_others
@@ -106,7 +101,18 @@ remove_others:
     bne +
     ; remove this sprite
     stz $14C8,x
-    ; TODO: spawn poof
+    ; spawn smoke 
+    stz $00 : stz $01
+    lda #$1B : sta $02
+    lda $E4,x : sta $04
+    lda $14E0,x : sta $05
+    lda $D8,x : sta $06
+    lda $14D4,x : sta $07
+    lda #$01
+    %SpawnSmokeGeneric()
+    ; play sounds effect
+    lda #$25
+    sta $1DFC
 +
     dex : bpl -
     plx
