@@ -57,6 +57,10 @@ main:
     ; remove other powerup sprites
     jsr remove_others
 
+    ; end bonus game
+    lda #$44
+    sta $14AB
+
 return:
 rts
 

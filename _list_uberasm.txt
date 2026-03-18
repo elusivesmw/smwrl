@@ -10,6 +10,7 @@ rom: smw.smc
 ; Level resources
 level:
 ;104 clear_ram.asm
+105 bonus_level.asm
 
 ; Overworld resources
 overworld:
