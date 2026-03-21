@@ -12,12 +12,28 @@ The bonus game is triggered manually by `bonus_level.asm` uberasm on a per level
 
 The abilities themselves are a sprite `inc_jump.asm` (currently) that looks like a Yoshi coin. Collecting one will despawn any other sprites of the same type so that more than one cannot be collected. The end bonus game timer will also be set at this point so that the player can exit the level.
 
-TODO: Extend the sprite extra properties to have multiple abilities depending on the properties set.
+**TODO:** Extend the sprite extra properties to have multiple abilities depending on the properties set.
 
-TODO: Figure out how to randomize the sprites that spawn when the level loads, e.g. the options of abilities presented to the player.
+**TODO:** Figure out how to randomize the sprites that spawn when the level loads, e.g. the options of abilities presented to the player.
 
 ## Permadeath
 
 Upon game over, the current save file is deleted. File of interest: `tools/asar/patches/permadeath.asm`
 
 TODO: To decheese, the deletion of the save file should happen immediately upon death, rather than at the game over screen. Reseting the console before actually dying is cheese that cannot be avoided (unless pausing removes a life, but I think the bad outways the good on that idea).
+
+Probably should let retry handle what it can here.
+
+## Autosave
+
+**TODO**
+
+Retry uberasm should handle this. Also disable manual save or at least don't allow "continue without save" option.
+
+## Single player only
+
+**TODO**
+
+Single player Mario/Luigi select, perhaps only after unlocking. On that note, look into saving across all save files, a la Jump 1/2 costumes. Investigate how this works.
+
+[One File, OnePlayer](https://www.smwcentral.net/?p=section&a=details&id=40641)

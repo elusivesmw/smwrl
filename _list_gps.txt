@@ -1,2 +1,17 @@
-200:0130	normal_jump.asm
-201:0130	spin_jump.asm
+; GPS block list
+
+; instant kill
+301:0130	kill_muncher.asm
+311:0130	kill_muncher.asm
+
+; conditional solids
+303:0130	mario_solid.asm
+304:0130	sprite_solid.asm
+
+; on/off blocks
+320:0025	switch_block.asm
+321:0025	switch_block_reverse.asm
+322:0025	switch_block.asm
+323:0025	switch_block_reverse.asm
+324:0025	switch_block.asm
+325:0025	switch_block_reverse.asm
