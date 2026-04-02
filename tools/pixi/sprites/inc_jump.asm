@@ -1,9 +1,11 @@
 !this_sprite_num = $AF
 
-!freeram     = $7FA200
-!normal_jump = !freeram+1
-!spin_jump   = !freeram+2
-!max_inc = 32 ; don't allow jump increase past a certain point
+!freeram        = $7FA200
+!normal_jump    = !freeram+1
+!spin_jump      = !freeram+2
+
+!inc_amount     = 4 ; how much to increase jump height by
+!max_inc        = 32 ; don't allow jump increase past a certain point
 
 print "INIT ",pc
 rtl
@@ -23,71 +25,34 @@ main:
     ; check if sprite is living
     lda $14C8,x
     cmp #$08
-    bne return
+    bne .return
     
     ; check if not frozen
     lda $9D
-    bne return
+    bne .return
 
     ; check for contact
     jsl $01A7DC
-    bcc return
+    bcc .return
 
     ; check property byte 1 for powerup type
     lda !extra_byte_1,x
     bne +
-    jmp .normal_jump
+    jsr normal_jump
+    jmp .cleanup
 +   cmp #$01
     bne +
-    jmp .spin_jump
+    jsr spin_jump
+    jmp .cleanup
 +   cmp #$02
-    bne return
-    jmp .placeholder
+    bne .return
+    jsr placeholder
+    ;jmp .cleanup
 
-.normal_jump:
-    ; add height to normal jump
-    lda !normal_jump
-    clc : adc #$02
-    cmp #!max_inc
-    bcs return
-    ..save:
-    sta !normal_jump
-    jmp .cleanup
+    .cleanup:
+    jsr cleanup
 
-.spin_jump:
-    ; add height to normal jump
-    lda !spin_jump
-    clc : adc #$02
-    cmp #!max_inc
-    bcs return
-    ..save:
-    sta !spin_jump
-    jmp .cleanup
-
-.placeholder:
-    ; next powerup
-    jmp .cleanup
-
-.cleanup:
-    ; remove sprite
-    stz $14C8,x
-    ; spawn glitter
-    stz $00 : stz $01
-    lda #$1B : sta $02
-    lda #$05
-    %SpawnSmoke()
-    ; play sounds effect
-    lda #$1C
-    sta $1DF9
-
-    ; remove other powerup sprites
-    jsr remove_others
-
-    ; end bonus game
-    lda #$44
-    sta $14AB
-
-return:
+    .return:
 rts
 
 
@@ -122,6 +87,54 @@ graphics:
     ldy #$02 ; tile size
     jsl $01B7B3
 rts
+
+; ---- powerups ----
+normal_jump:
+    ; add height to normal jump
+    lda !normal_jump
+    clc : adc #!inc_amount
+    cmp #!max_inc
+    bcs .return
+    .save:
+    sta !normal_jump
+    .return:
+rts
+
+spin_jump:
+    ; add height to normal jump
+    lda !spin_jump
+    clc : adc #!inc_amount
+    cmp #!max_inc
+    bcs .return
+    .save:
+    sta !spin_jump
+    .return:
+rts
+
+placeholder:
+    ; next powerup
+    .return:
+rts
+; ---- end powerups ----
+
+cleanup:
+    ; remove sprite
+    stz $14C8,x
+    ; spawn glitter
+    stz $00 : stz $01
+    lda #$1B : sta $02
+    lda #$05
+    %SpawnSmoke()
+    ; play sounds effect
+    lda #$1C
+    sta $1DF9
+
+    ; remove other powerup sprites
+    jsr remove_others
+
+    ; end bonus game
+    lda #$44
+    sta $14AB
 
 remove_others:
     phx
