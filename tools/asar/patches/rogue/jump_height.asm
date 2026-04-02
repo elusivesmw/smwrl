@@ -11,9 +11,14 @@ org $00D65E
     autoclean jml try_normal_jump
     nop #2
 
+org $01AA3B
+    autoclean jml boost_jump
+    nop #2
+
 ; offset from vanilla table (initial nerf amount)
 !offset_normal = 16
 !offset_spin = 10
+!offset_boost = 24
 
 ; index based on speed
 ; even - normal jump
@@ -90,16 +95,17 @@ jump_height:
 
 ; ----
 
-; TODO: handle boost jump heights also
-;BoostMarioSpeed:                ;-----------| Routine to handle Mario's speed from bouncing off of an enemy.
-;    LDA $74                     ;$01AA33    |\ If climbing, don't bounce.
-;    BNE Return01AA41            ;$01AA35    |/
-;    LDA.b #$D0                  ;$01AA37    |\\ Speed Mario bounces off of an enemy without A being pressed.
-;    BIT $15                     ;$01AA39    ||
-;    BPL CODE_01AA3F             ;$01AA3B    ||
-;    LDA.b #$A8                  ;$01AA3D    ||| Speed Mario bounces off of an enemy with A pressed.
-;CODE_01AA3F:                    ;           ||
-;    STA $7D                     ;$01AA3F    |/
+boost_jump:
+    bpl .save ; original code
+    lda #$A8+!offset_boost
+    sec : sbc !jump_boost
+    sta !debug_out ; TODO: remove
+.save
+    sta $7d
+.return
+    jml $01AA41
+
+; ----
 
 ; TODO: tie to normal jump height
 ;LDA.b #$B0                  ;$01DA33    | jumping off a rope
