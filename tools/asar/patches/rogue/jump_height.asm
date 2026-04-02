@@ -91,25 +91,6 @@ jump_height:
 ; ----
 
 ; TODO: handle boost jump heights also
-
-;LDA.w DATA_00DABB,Y         ;$00DBA0    |\ Set Y speed for jumping off a net.
-;STA $7D                     ;$00DBA3    |/
-
-;LDA.b #$AA                  ;$00EA9F    |\\ Y speed to give Mario when jumping out of water.
-;STA $7D                     ;$00EAA1    |/
-
-;LDA.b #$E0                  ;$00EB6F    |\\ Y speed to give when jumping out of a wall-run.
-;STA $7D                     ;$00EB71    |/
-
-;LDA.b #$80                  ;$00F029    |\\ Y speed to give Mario when bouncing off a purple triangle with Yoshi.
-;STA $7D                     ;$00F02B    |/
-
-;LDA.b #$90                  ;$00F606    |\\ Speed at which Mario jumps upward.
-;STA $7D                     ;$00F608    |/
-
-;LDA.b #$F8                  ;$01A928    |\\ Y speed of Mario when stomping an enemy while spinjumping.
-;STA $7D                     ;$01A92A    ||
-
 ;BoostMarioSpeed:                ;-----------| Routine to handle Mario's speed from bouncing off of an enemy.
 ;    LDA $74                     ;$01AA33    |\ If climbing, don't bounce.
 ;    BNE Return01AA41            ;$01AA35    |/
@@ -120,35 +101,22 @@ jump_height:
 ;CODE_01AA3F:                    ;           ||
 ;    STA $7D                     ;$01AA3F    |/
 
-;CODE_01C2AF:                    ;```````````| Sprite 80 (flying key).
-;    CMP.b #$80                  ;$01C2AF    |\ Branch if not sprite 80.
-;    BNE CODE_01C2CE             ;$01C2B1    |/
-;    LDA $7D                     ;$01C2B3    |\ Return if Mario is moving upward.
-;    BMI Return01C2D2            ;$01C2B5    |/
-;    LDA.b #$09                  ;$01C2B7    |\ Make carryable.
-;    STA.w $14C8,X               ;$01C2B9    |/
-;    LDA.b #$D0                  ;$01C2BC    |\ Bounce Mario.
-;    STA $7D                     ;$01C2BE    |/
+; TODO: tie to normal jump height
+;LDA.b #$B0                  ;$01DA33    | jumping off a rope
+;LDA.b #$AA                  ;$00EA9F    | jumping out of water
 
+; TODO: maybe not handle
+;LDA.w DATA_00DABB,Y         ;$00DBA0    | jumping off a net
 
-;LDA.b #$D0                  ;$01D2F9    |\\ Y speed to give Mario after bouncing on Morton/Roy/Ludwig.
-;STA $7D                     ;$01D2FB    |/
-
-;LDA.b #$B0                  ;$01DA33    |\\ Y speed given when jumping off a rope mechanism.
-;STA $7D                     ;$01DA35    |/
-
-;LDA.b #$C0                  ;$01E88C    ||\\ Y speed to give Mario when jumping out of a Lakitu cloud.
-;STA $7D                     ;$01E88E    ||/
-
-;LDA.b #$C0                  ;$01EDBF    ||| Y speed to give Mario when jumping off Yoshi on the ground.
-;CODE_01EDC1:                    ;           ||
-;STA $7D                     ;$01EDC1    |/
-
-;LDA.b #$A0                  ;$02916C    |\ Y speed given when bouncing off a noteblock.
-;STA $7D                     ;$02916E    |/
-
-;LDA.w DATA_02CDFF,Y         ;$02CDE7    || Give Mario Y speed for jumping off the wall springboard. 
-;STA $7D                     ;$02CDEA    |/
-
-;LDA.w DATA_02CE07,Y         ;$02CFE5    || Bounce Mario upwards. (springboara)
-;STA $7D                     ;$02CFE8    |/
+; intentionally unhandled
+;LDA.b #$F8                  ;$01A928    | spinning on an enemy
+;LDA.b #$90                  ;$00F606    | death animation
+;LDA.w DATA_02CE07,Y         ;$02CFE5    | bouncing (A/B not held) off a green bean 
+;LDA.w DATA_02CDFF,Y         ;$02CDE7    | jumping (A/B held) off the green bean
+;LDA.b #$A0                  ;$02916C    | bouncing off a noteblock
+;LDA.b #$C0                  ;$01EDBF    | jumping off Yoshi on the ground
+;LDA.b #$80                  ;$00F029    | bouncing off a purple triangle with Yoshi
+;LDA.b #$E0                  ;$00EB6F    | jumping out of a wall-run
+;LDA.b #$C0                  ;$01E88C    | jumping out of a Lakitu cloud
+;LDA.b #$D0                  ;$01D2F9    | bouncing on Morton/Roy/Ludwig (edge case)
+;LDA.b #$D0                  ;$01C2BC    | bouncing off of flying key (sprite 80) (edge case)
