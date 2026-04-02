@@ -1,11 +1,9 @@
 !this_sprite_num = $AF
 
-!freeram = $7FA200
+!freeram     = $7FA200
 !normal_jump = !freeram+1
+!spin_jump   = !freeram+2
 !max_inc = 32 ; don't allow jump increase past a certain point
-
-!tile_num_1 = $80
-!tile_num_2 = $A0
 
 print "INIT ",pc
 rtl
@@ -35,14 +33,42 @@ main:
     jsl $01A7DC
     bcc return
 
+    ; check property byte 1 for powerup type
+    lda !extra_byte_1,x
+    bne +
+    jmp .normal_jump
++   cmp #$01
+    bne +
+    jmp .spin_jump
++   cmp #$02
+    bne return
+    jmp .placeholder
+
+.normal_jump:
     ; add height to normal jump
     lda !normal_jump
     clc : adc #$02
     cmp #!max_inc
     bcs return
-    .save:
+    ..save:
     sta !normal_jump
+    jmp .cleanup
 
+.spin_jump:
+    ; add height to normal jump
+    lda !spin_jump
+    clc : adc #$02
+    cmp #!max_inc
+    bcs return
+    ..save:
+    sta !spin_jump
+    jmp .cleanup
+
+.placeholder:
+    ; next powerup
+    jmp .cleanup
+
+.cleanup:
     ; remove sprite
     stz $14C8,x
     ; spawn glitter
@@ -78,10 +104,13 @@ graphics:
     clc : adc #$10
     sta $0305,y
     ; tile numbers
-    lda #!tile_num_1
+    phx
+    lda !extra_byte_1,x : tax  ; get extra byte 1 in x 
+    lda tile_map_1,x
     sta $0302,y
-    lda #!tile_num_2
+    lda tile_map_2,x
     sta $0306,y
+    plx
     ; properties
     lda $15F6,x
     ora $64
@@ -121,3 +150,9 @@ remove_others:
     dex : bpl -
     plx
 rts
+
+
+tile_map_1:
+db $80,$82
+tile_map_2:
+db $A0,$A2
