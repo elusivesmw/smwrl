@@ -1,14 +1,18 @@
+; config
 !this_sprite_num = $AF
-
-!freeram        = $7FA200
-!jump_ability   = !freeram+0
-!normal_jump    = !freeram+1
-!spin_jump      = !freeram+2
-!boost_jump     = !freeram+3
 
 !inc_amount     = 2 ; how much to increase jump height by
 !jump_max_inc   = 32 ; normal/spin increment max
 !boost_max_inc  = 24 ; boost increment max
+
+; ram setup
+!freeram        = $7FA200
+!jump_flags     = !freeram+0
+!jump_normal    = !freeram+1
+!jump_spin      = !freeram+2
+!jump_boost     = !freeram+3
+!disable_carry  = !freeram+4
+
 
 print "INIT ",pc
 rtl
@@ -52,10 +56,14 @@ main:
     jsr spin_jump
     jmp .cleanup
 +   cmp #$03
-    bne .return
-    jsr boost_jump 
+    bne +
+    jsr boost_jump
     jmp .cleanup
 +   cmp #$04
+    bne +
+    jsr enable_carry
+    jmp .cleanup
++   cmp #$05
     bne .return
     jsr placeholder
     ;jmp .cleanup
@@ -116,40 +124,46 @@ y_offset:
 jump_ability:
     ; set both jump flags
     lda #03
-    sta !jump_ability
+    sta !jump_flags
 rts
 
 normal_jump:
     ; add height to normal jump
-    lda !normal_jump
+    lda !jump_normal
     clc : adc #!inc_amount
     cmp #!jump_max_inc
     bcs .return
     .save:
-    sta !normal_jump
+    sta !jump_normal
     .return:
 rts
 
 spin_jump:
     ; add height to normal jump
-    lda !spin_jump
+    lda !jump_spin
     clc : adc #!inc_amount
     cmp #!jump_max_inc
     bcs .return
     .save:
-    sta !spin_jump
+    sta !jump_spin
     .return:
 rts
 
 boost_jump:
     ; add height to boost jump
-    lda !boost_jump
+    lda !jump_boost
     clc : adc #!inc_amount
     cmp #!boost_max_inc
     bcs .return
     .save:
-    sta !boost_jump
+    sta !jump_boost
     .return:
+rts
+
+enable_carry:
+    ; clear disable carry flag
+    lda #$00
+    sta !disable_carry
 rts
 
 placeholder:
@@ -209,6 +223,6 @@ rts
 
 
 tile_map_1:
-db $80,$82,$84,$86
+db $80,$82,$84,$86,$88
 tile_map_2:
-db $A0,$A2,$A4,$A6
+db $A0,$A2,$A4,$A6,$A8
