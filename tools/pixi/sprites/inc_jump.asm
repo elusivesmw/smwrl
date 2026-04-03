@@ -162,7 +162,8 @@ cleanup:
     ; remove sprite
     stz $14C8,x
     ; spawn glitter
-    stz $00 : stz $01
+    stz $00 
+    lda #$08 : sta $01
     lda #$1B : sta $02
     lda #$05
     %SpawnSmoke()
@@ -189,7 +190,8 @@ remove_others:
     ; remove this sprite
     stz $14C8,x
     ; spawn smoke 
-    stz $00 : stz $01
+    stz $00 
+    lda #$08 : sta $01
     lda #$1B : sta $02
     lda $E4,x : sta $04
     lda $14E0,x : sta $05
