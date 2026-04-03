@@ -61,7 +61,7 @@
     {
       "X": 0,
       "Y": 0,
-      "Description": "Increments jump height",
+      "Description": "Ability sprite\n\nGive or improves abilities based on extra bytes",
       "ExtraBit": false,
       "Tiles": [
         {
@@ -77,7 +77,7 @@
   ],
   "Collection": [
     {
-      "Name": "Increments normal jump height",
+      "Name": "Enables all jump types",
       "ExtraBit": false,
       "Extra Property Byte 1": 0,
       "Extra Property Byte 2": 0,
@@ -93,9 +93,41 @@
       "Extra Property Byte 12": 0
     },
     {
-      "Name": "Increments spin jump height",
+      "Name": "Increments normal jump height",
       "ExtraBit": false,
       "Extra Property Byte 1": 1,
+      "Extra Property Byte 2": 0,
+      "Extra Property Byte 3": 0,
+      "Extra Property Byte 4": 0,
+      "Extra Property Byte 5": 0,
+      "Extra Property Byte 6": 0,
+      "Extra Property Byte 7": 0,
+      "Extra Property Byte 8": 0,
+      "Extra Property Byte 9": 0,
+      "Extra Property Byte 10": 0,
+      "Extra Property Byte 11": 0,
+      "Extra Property Byte 12": 0
+    },
+    {
+      "Name": "Increments spin jump height",
+      "ExtraBit": false,
+      "Extra Property Byte 1": 2,
+      "Extra Property Byte 2": 0,
+      "Extra Property Byte 3": 0,
+      "Extra Property Byte 4": 0,
+      "Extra Property Byte 5": 0,
+      "Extra Property Byte 6": 0,
+      "Extra Property Byte 7": 0,
+      "Extra Property Byte 8": 0,
+      "Extra Property Byte 9": 0,
+      "Extra Property Byte 10": 0,
+      "Extra Property Byte 11": 0,
+      "Extra Property Byte 12": 0
+    },
+    {
+      "Name": "Increments boost jump height",
+      "ExtraBit": false,
+      "Extra Property Byte 1": 3,
       "Extra Property Byte 2": 0,
       "Extra Property Byte 3": 0,
       "Extra Property Byte 4": 0,

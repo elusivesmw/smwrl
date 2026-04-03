@@ -1,11 +1,14 @@
 !this_sprite_num = $AF
 
 !freeram        = $7FA200
+!jump_ability   = !freeram+0
 !normal_jump    = !freeram+1
 !spin_jump      = !freeram+2
+!boost_jump     = !freeram+3
 
-!inc_amount     = 4 ; how much to increase jump height by
-!max_inc        = 32 ; don't allow jump increase past a certain point
+!inc_amount     = 2 ; how much to increase jump height by
+!jump_max_inc   = 32 ; normal/spin increment max
+!boost_max_inc  = 24 ; boost increment max
 
 print "INIT ",pc
 rtl
@@ -38,13 +41,21 @@ main:
     ; check property byte 1 for powerup type
     lda !extra_byte_1,x
     bne +
-    jsr normal_jump
+    jsr jump_ability
     jmp .cleanup
 +   cmp #$01
     bne +
-    jsr spin_jump
+    jsr normal_jump
     jmp .cleanup
 +   cmp #$02
+    bne +
+    jsr spin_jump
+    jmp .cleanup
++   cmp #$03
+    bne .return
+    jsr boost_jump 
+    jmp .cleanup
++   cmp #$04
     bne .return
     jsr placeholder
     ;jmp .cleanup
@@ -89,11 +100,17 @@ graphics:
 rts
 
 ; ---- powerups ----
+jump_ability:
+    ; set both jump flags
+    lda #03
+    sta !jump_ability
+rts
+
 normal_jump:
     ; add height to normal jump
     lda !normal_jump
     clc : adc #!inc_amount
-    cmp #!max_inc
+    cmp #!jump_max_inc
     bcs .return
     .save:
     sta !normal_jump
@@ -104,10 +121,21 @@ spin_jump:
     ; add height to normal jump
     lda !spin_jump
     clc : adc #!inc_amount
-    cmp #!max_inc
+    cmp #!jump_max_inc
     bcs .return
     .save:
     sta !spin_jump
+    .return:
+rts
+
+boost_jump:
+    ; add height to boost jump
+    lda !boost_jump
+    clc : adc #!inc_amount
+    cmp #!boost_max_inc
+    bcs .return
+    .save:
+    sta !boost_jump
     .return:
 rts
 
@@ -166,6 +194,6 @@ rts
 
 
 tile_map_1:
-db $80,$82
+db $80,$82,$84,$86
 tile_map_2:
-db $A0,$A2
+db $A0,$A2,$A4,$A6
