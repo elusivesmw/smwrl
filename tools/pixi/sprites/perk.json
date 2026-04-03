@@ -49,7 +49,7 @@
     "Don't turn into a coin with silver POW": true,
     "Don't get stuck in walls (carryable sprites)": false
   },
-  "AsmFile": "inc_jump.asm",
+  "AsmFile": "perk.asm",
   "ActLike": 120,
   "Type": 1,
   "Extra Property Byte 1": 1,
@@ -61,7 +61,7 @@
     {
       "X": 0,
       "Y": 0,
-      "Description": "Ability sprite\n\nGive or improves abilities based on extra bytes",
+      "Description": "Perk\n\nGive or improves perks based on extra bytes",
       "ExtraBit": false,
       "Tiles": [
         {
