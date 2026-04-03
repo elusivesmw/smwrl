@@ -74,8 +74,18 @@ graphics:
     lda $00
     sta $0300,y
     sta $0304,y
+    ; Y offset for animation
+    inc $1570,x
+    lda $1570,x
+    lsr #4 ; speed
+    and #$07 ; max index
+    phx : tax
+    lda y_offset,x
+    plx
+    sta $02
     ; Y position
     lda $01
+    clc : adc $02 ; add Y offset for animation
     sta $0301,y
     clc : adc #$10
     sta $0305,y
@@ -98,6 +108,9 @@ graphics:
     ldy #$02 ; tile size
     jsl $01B7B3
 rts
+
+y_offset:
+    db 0,0,0,-1,-2,-3,-2,-1
 
 ; ---- powerups ----
 jump_ability:
