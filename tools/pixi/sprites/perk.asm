@@ -1,6 +1,6 @@
 ; config
 !this_sprite_num = $AF
-
+!perk_count     = 5 ; perks max index + 1
 !inc_amount     = 2 ; how much to increase jump height by
 !jump_max_inc   = 32 ; normal/spin increment max
 !boost_max_inc  = 24 ; boost increment max
@@ -15,12 +15,26 @@
 
 
 print "INIT ",pc
+    jsr init
 rtl
 
 print "MAIN ",pc
 phb : phk : plb
     jsr main 
 plb : rtl
+
+init:
+    ; check if perk is random
+    lda !extra_byte_1,x
+    cmp #$ff : bne .return
+    ; init random perk type
+    jsr random_perk
+wdm
+    sta $160E,x
+
+    jsr graphics
+    .return:
+rts
 
 main:
     jsr graphics
@@ -42,34 +56,30 @@ main:
     jsl $01A7DC
     bcc .return
 
-    ; check extra byte 1 for perk type 
-    lda !extra_byte_1,x
+    ; get perk type
+    jsr perk_index
+
     bne +
     jsr jump_ability
     jmp .cleanup
 +
-    cmp #$01
-    bne +
+    cmp #$01 : bne +
     jsr normal_jump
     jmp .cleanup
 +
-    cmp #$02
-    bne +
+    cmp #$02 : bne +
     jsr spin_jump
     jmp .cleanup
 +
-    cmp #$03
-    bne +
+    cmp #$03 : bne +
     jsr boost_jump
     jmp .cleanup
 +
-    cmp #$04
-    bne +
+    cmp #$04 : bne +
     jsr enable_carry
     jmp .cleanup
 +
-    cmp #$05
-    bne .return
+    cmp #$05 : bne .return
     jsr placeholder
     ;jmp .cleanup
 
@@ -78,7 +88,6 @@ main:
 
     .return:
 rts
-
 
 graphics:
     %GetDrawInfo()
@@ -104,7 +113,7 @@ graphics:
     sta $0305,y
     ; tile numbers
     phx
-    lda !extra_byte_1,x : tax  ; get extra byte 1 in x 
+    jsr perk_index : tax  ; get perk index in x 
     lda tile_map_1,x
     sta $0302,y
     lda tile_map_2,x
@@ -124,8 +133,39 @@ rts
 
 y_offset:
     db 0,0,0,-1,-2,-3,-2,-1
+tile_map_1:
+    db $80,$82,$84,$86,$88
+tile_map_2:
+    db $A0,$A2,$A4,$A6,$A8
 
-; ---- powerups ----
+; determine random perk
+; return perk index in A
+random_perk:
+    ; TODO: figure out how to use RNG
+    ;jsl $01ACF9
+    ;lda $148C
+
+    ; janky frame counter/sprite slot based RNG for now...
+    lda $7fA300 ; retry resets frame counter $13 so we can't use that
+    stx $00
+    eor $00 ; eor with X so all aren't the same
+-
+    sec : sbc #!perk_count
+    cmp #!perk_count : bcs - 
+    .return:
+rts
+
+; return effective perk index in A
+perk_index:
+    ; check extra byte 1 for perk type 
+    lda !extra_byte_1,x
+    ; if random, load effective perk
+    cmp #$ff : bne .return
+    lda $160E,x
+    .return
+rts
+
+; ---- perks ----
 jump_ability:
     ; set both jump flags
     lda #03
@@ -175,7 +215,7 @@ placeholder:
     ; next powerup
     .return:
 rts
-; ---- end powerups ----
+; ---- end perks ----
 
 cleanup:
     ; remove sprite
@@ -225,9 +265,3 @@ remove_others:
     dex : bpl -
     plx
 rts
-
-
-tile_map_1:
-db $80,$82,$84,$86,$88
-tile_map_2:
-db $A0,$A2,$A4,$A6,$A8
