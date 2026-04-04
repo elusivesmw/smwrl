@@ -42,28 +42,33 @@ main:
     jsl $01A7DC
     bcc .return
 
-    ; check property byte 1 for powerup type
+    ; check extra byte 1 for perk type 
     lda !extra_byte_1,x
     bne +
     jsr jump_ability
     jmp .cleanup
-+   cmp #$01
++
+    cmp #$01
     bne +
     jsr normal_jump
     jmp .cleanup
-+   cmp #$02
++
+    cmp #$02
     bne +
     jsr spin_jump
     jmp .cleanup
-+   cmp #$03
++
+    cmp #$03
     bne +
     jsr boost_jump
     jmp .cleanup
-+   cmp #$04
++
+    cmp #$04
     bne +
     jsr enable_carry
     jmp .cleanup
-+   cmp #$05
++
+    cmp #$05
     bne .return
     jsr placeholder
     ;jmp .cleanup
@@ -181,11 +186,11 @@ cleanup:
     lda #$1B : sta $02
     lda #$05
     %SpawnSmoke()
-    ; play sounds effect
+    ; play sound effect
     lda #$1C
     sta $1DF9
 
-    ; remove other powerup sprites
+    ; remove other perk sprites
     jsr remove_others
 
     ; end bonus game
@@ -213,7 +218,7 @@ remove_others:
     lda $14D4,x : sta $07
     lda #$01
     %SpawnSmokeGeneric()
-    ; play sounds effect
+    ; play sound effect
     lda #$25
     sta $1DFC
 +
