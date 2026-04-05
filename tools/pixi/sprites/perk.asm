@@ -1,6 +1,6 @@
 ; config
 !this_sprite_num = $AF
-!perk_count     = 5 ; perks max index + 1
+!perk_count     = 7 ; perks max index + 1
 !inc_amount     = 2 ; how much to increase jump height by
 !jump_max_inc   = 32 ; normal/spin increment max
 !boost_max_inc  = 24 ; boost increment max
@@ -78,7 +78,15 @@ main:
     jsr enable_carry
     jmp .cleanup
 +
-    cmp #$05 : bne .return
+    cmp #$05 : bne +
+    jsr one_up
+    jmp .cleanup
++
+    cmp #$06 : bne +
+    jsr three_up
+    jmp .cleanup
++
+    cmp #$fe : bne .return
     jsr placeholder
     ;jmp .cleanup
 
@@ -133,9 +141,9 @@ rts
 y_offset:
     db 0,0,0,-1,-2,-3,-2,-1
 tile_map_1:
-    db $80,$82,$84,$86,$88
+    db $80,$82,$84,$86,$88,$8A,$8C
 tile_map_2:
-    db $A0,$A2,$A4,$A6,$A8
+    db $A0,$A2,$A4,$A6,$A8,$AA,$AC
 
 ; determine random perk
 ; return perk index in A
@@ -202,6 +210,19 @@ boost_jump:
     .save:
     sta !jump_boost
     .return:
+rts
+
+one_up:
+    ; add one live
+    inc $0DBE
+rts
+
+three_up:
+    ; add three live
+    wdm
+    lda $0DBE
+    clc : adc #3
+    sta $0DBE
 rts
 
 enable_carry:

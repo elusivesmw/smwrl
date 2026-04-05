@@ -58,7 +58,7 @@ sram_defaults:
     ; Feel free to add your own stuff here.
 
     ; rogue: let's just go overkill here
-    db $03,$00,$00,$00,$01,$00,$00,$00 ; 00-07 perk statuses
+    db $01,$00,$00,$00,$01,$00,$00,$00 ; 00-07 perk statuses
     db $00,$00,$00,$00,$00,$00,$00,$00 ; 07-0f
     db $00,$00,$00,$00,$00,$00,$00,$00 ; 10-17
     db $00,$00,$00,$00,$00,$00,$00,$00 ; 17-1f
