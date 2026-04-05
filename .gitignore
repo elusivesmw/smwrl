@@ -18,6 +18,8 @@ tools/uberasm/*
 !tools/uberasm/library/*
 !tools/uberasm/retry_config
 !tools/uberasm/retry_config/*
+!tools/uberasm/rogue
+!tools/uberasm/rogue/*
 
 ## except blocks
 !tools/gps/

@@ -6,12 +6,12 @@
 !boost_max_inc  = 24 ; boost increment max
 
 ; ram setup
-!freeram        = $7FA200
-!jump_flags     = !freeram+0
-!jump_normal    = !freeram+1
-!jump_spin      = !freeram+2
-!jump_boost     = !freeram+3
-!disable_carry  = !freeram+4
+!saveram        = $7FA200
+!jump_flags     = !saveram+0
+!jump_normal    = !saveram+1
+!jump_spin      = !saveram+2
+!jump_boost     = !saveram+3
+!disable_carry  = !saveram+4
 
 
 print "INIT ",pc
@@ -28,8 +28,7 @@ init:
     lda !extra_byte_1,x
     cmp #$ff : bne .return
     ; init random perk type
-    jsr random_perk
-wdm
+    jsr init_random_perk
     sta $160E,x
 
     jsr graphics
@@ -59,7 +58,7 @@ main:
     ; get perk type
     jsr perk_index
 
-    bne +
+    cmp #$00 : bne +
     jsr jump_ability
     jmp .cleanup
 +
@@ -140,7 +139,7 @@ tile_map_2:
 
 ; determine random perk
 ; return perk index in A
-random_perk:
+init_random_perk:
     ; TODO: figure out how to use RNG
     ;jsl $01ACF9
     ;lda $148C

@@ -1,7 +1,6 @@
-!freeram = $7FA200
-
-; clear 256 bytes
+; NOTE: not currently called
 init:
+    ; clear 256 bytes
 	lda #$00
 	ldx #$00
 	.loop:

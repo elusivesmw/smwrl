@@ -1,11 +1,9 @@
-!frame_counter = $7FA300
+init:
+    jsl rogue_level_init
 
 main:
     jsl retry_in_level_main
-
-    lda !frame_counter
-    inc : sta !frame_counter 
-    rtl
+    jsl rogue_level_main
 
 nmi:
     jsl retry_nmi_level
