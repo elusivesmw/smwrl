@@ -41,7 +41,7 @@ rts
 main:
     jsr graphics
 if !sparkle == 1
-    jsr CODE_01B14E
+    jsr sparkle
 endif
 
     ; check if offscreen
@@ -151,74 +151,75 @@ tile_map_1:
 tile_map_2:
     db $A0,$A2,$A4,$A6,$A8,$AA,$AC
 
+sparkle:
+    ; how often to spawn a sparkle
+    lda $13
+    and #$1F
+    ora $9D
+    ora $186C,X ; vertical offscreen flag
+    ora $9D
+    bne .return
 
+    ; set sparkle position
+    jsl $01ACF9 ; get random
+    and #$0F
+    clc
+    ldy #$00
+    adc #$FC
+    bpl +
+    dey
++
+    ; random X offset in the range #$FFFC-#$000B, unless offscreen
+    clc
+    adc $E4,X
+    sta $02
+    tya
+    adc $14E0,X
+    pha
+    lda $02
+    cmp $1A
+    pla
+    sbc $1B
+    bne .return
 
+    ;random Y offset in the range #$00FE-#$010D
+    lda $148E
+    and #$0F
+    clc
+    adc #$FE
+    adc $D8,X
+    sta $00
+    lda $14D4,X
+    adc #$00
+    sta $01
 
-CODE_01B14E:					;-----------| Sprite glitter subroutine.
-	LDA $13						;$01876A	|\ 
-	AND.b #$1F					;$01876C	|| Make the sphere glitter.
-	ORA $9D						;$01876E	||
-CODE_01B152:					;```````````|
-	ORA.w $186C,X				;$01B152	|\ 
-	ORA $9D						;$01B155	|| Return if game frozen or sprite offscreen.
-	BNE Return01B191			;$01B157	|/
-	JSL $01ACF9					;$01B159	|\ get rand
-	AND.b #$0F					;$01B15D	||
-	CLC							;$01B15F	||
-	LDY.b #$00					;$01B160	||
-	ADC.b #$FC					;$01B162	||
-	BPL CODE_01B167				;$01B164	||
-	DEY							;$01B166	||
-CODE_01B167:					;			||
-	CLC							;$01B167	|| Give a random X offset in the range #$FFFC-#$000B.
-	ADC $E4,X					;$01B168	|| Return if that would stick the sparkle offscreen.
-	STA $02						;$01B16A	||
-	TYA							;$01B16C	||
-	ADC.w $14E0,X				;$01B16D	||
-	PHA							;$01B170	||
-	LDA $02						;$01B171	||
-	CMP $1A						;$01B173	||
-	PLA							;$01B175	||
-	SBC $1B						;$01B176	||
-	BNE Return01B191			;$01B178	|/
-	LDA.w $148E					;$01B17A	|\ 
-	AND.b #$0F					;$01B17D	||
-	CLC							;$01B17F	||
-	ADC.b #$FE					;$01B180	||
-	ADC $D8,X					;$01B182	|| Give a random Y offset in the range #$00FE-#$010D.
-	STA $00						;$01B184	||
-	LDA.w $14D4,X				;$01B186	||
-	ADC.b #$00					;$01B189	||
-	STA $01						;$01B18B	|/
-	JSR CODE_0285BA				;$01B18D	| Spawn the sparkle.
-Return01B191:					;			|
-	RTS							;$01B191	|
+    ; find slot and spawn the sparkle
+    jsr find_slot
+    .return:
+rts
 
+; find an empty minor extended sprite slot
+find_slot:
+    LDY #$0B
+-
+    lda $17F0,Y
+    beq draw_sparkle
+    dey
+    bpl -
+rts
 
-CODE_0285BA:					;			|
-	LDY.b #$0B					;$0285BA	|\ 
-CODE_0285BC:					;			||
-	LDA.w $17F0,Y				;$0285BC	||
-	BEQ CODE_0285C5				;$0285BF	|| Find an empty minor extended sprite slot. Return if none found.
-	DEY							;$0285C1	||
-	BPL CODE_0285BC				;$0285C2	||
-	RTS							;$0285C4	|/
-
-CODE_0285C5:
-	LDA.b #$05					;$0285C5	|\\ Minor extended sprite to spawn (sparkle).
-	STA.w $17F0,Y				;$0285C7	|/
-	LDA.b #$00					;$0285CA	|\ Clear Y speed?
-	STA.w $1820,Y				;$0285CC	|/
-	LDA $00						;$0285CF	|\ Set Y position.
-	STA.w $17FC,Y				;$0285D1	|/
-	LDA $02						;$0285D4	|\ Set X position.
-	STA.w $1808,Y				;$0285D6	|/
-	LDA.b #$17					;$0285D9	|\\ Number of frames to keep the sprite active for.
-	STA.w $1850,Y				;$0285DB	|/
-	RTS							;$0285DE	|
-
-
-
+draw_sparkle:
+    lda #$05 ; minor extended sprite to spawn (sparkle)
+    sta $17F0,Y
+    lda #$00
+    sta $1820,Y
+    lda $00
+    sta $17FC,Y ; set Y position
+    lda $02
+    sta $1808,Y ; set X postion
+    lda #$17
+    sta $1850,Y ; set lifespan in frames
+rts
 
 ; determine random perk
 ; return perk index in A
