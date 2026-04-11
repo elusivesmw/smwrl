@@ -15,7 +15,8 @@
 !jump_boost     = !saveram+3
 !disable_carry  = !saveram+4
 
-
+; convert palette number into CCC format
+function pal(val) = (val-8)*2
 
 print "INIT ",pc
     jsr init
@@ -108,7 +109,6 @@ graphics:
     ; X position
     lda $00
     sta $0300,y
-    sta $0304,y
     ; Y offset for animation
     inc $1570,x
     lda $1570,x
@@ -123,33 +123,33 @@ graphics:
     clc : adc $02 ; add Y offset for animation
     sta $0301,y
     clc : adc #$10
-    sta $0305,y
     ; tile numbers
     phx
     jsr perk_index : tax  ; get perk index in x 
-    lda tile_map_1,x
+    lda tile_map,x
     sta $0302,y
-    lda tile_map_2,x
-    sta $0306,y
+    lda palette,x
+    sta $0F ; store palette in scratch
     plx
     ; properties
     lda $15F6,x
     ora $64
+    and #%11110001 ; clear palette
+    ora $0F ; set palette from scratch
     sta $0303,y
-    sta $0307,y
     
     ; finish oam write
-    lda #$01 ; number tiles to draw - 1
+    lda #$00 ; number tiles to draw - 1
     ldy #$02 ; tile size
     jsl $01B7B3
 rts
 
+palette:
+    db pal($0C),pal($0C),pal($0C),pal($0C),pal($08),pal($0D),pal($0A)
 y_offset:
     db 0,0,0,-1,-2,-3,-2,-1
-tile_map_1:
+tile_map:
     db $80,$82,$84,$86,$88,$8A,$8C
-tile_map_2:
-    db $A0,$A2,$A4,$A6,$A8,$AA,$AC
 
 sparkle:
     ; how often to spawn a sparkle
@@ -318,7 +318,7 @@ cleanup:
     stz $14C8,x
     ; spawn glitter
     stz $00 
-    lda #$08 : sta $01
+    stz $01
     lda #$1B : sta $02
     lda #$05
     %SpawnSmoke()
@@ -345,8 +345,8 @@ remove_others:
     ; remove this sprite
     stz $14C8,x
     ; spawn smoke 
-    stz $00 
-    lda #$08 : sta $01
+    stz $00
+    stz $01
     lda #$1B : sta $02
     lda $E4,x : sta $04
     lda $14E0,x : sta $05

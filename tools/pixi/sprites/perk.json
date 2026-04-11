@@ -7,13 +7,13 @@
     "Disappears in cloud of smoke": false
   },
   "$1662": {
-    "Sprite Clipping": 16,
+    "Sprite Clipping": 0,
     "Use shell as death frame": false,
     "Fall straight down when killed": false
   },
   "$166E": {
     "Use second graphics page": true,
-    "Palette": 4,
+    "Palette": 0,
     "Disable fireball killing": false,
     "Disable cape killing": false,
     "Disable water splash": false,
