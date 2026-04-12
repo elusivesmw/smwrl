@@ -9,13 +9,13 @@ rom: smw.smc
 
 ; Level resources
 level:
+100 bonus_level.asm
 
 ; Overworld resources
 overworld:
 
 ; Game mode resources
 gamemode:
-;00 rl_gm00.asm
 00 retry_gm00.asm
 06 retry_gm06.asm
 07 retry_gm07.asm
