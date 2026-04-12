@@ -20,6 +20,14 @@ The bonus game levels (`level 00` and `level 100`, depending on level entrance n
 
 Rarity is not programmed yet.
 
+### Future Perks
+
+- Ability to swim (rare)
+
+### Other
+
+- Add a shop
+
 ### How it works
 
 The bonus game is triggered on each every level by `uberasm/rogue/level.asm`. May move this back into a per level basis. I may have different bonus rooms that are determined by level type, e.g. a castle may give more rare perks than a regular level. I need to think about how I want this to work, i.e. on specific levels, by collecting some amount of...something, or something else entirely.
