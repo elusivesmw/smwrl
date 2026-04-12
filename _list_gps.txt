@@ -15,3 +15,7 @@
 323:0025	switch_block_reverse.asm
 324:0025	switch_block.asm
 325:0025	switch_block_reverse.asm
+
+; bonus game
+31E:0025    exit_bonus_door.asm
+32E:0025    exit_bonus_door.asm
