@@ -15,6 +15,9 @@
 !jump_boost     = !saveram+3
 !disable_carry  = !saveram+4
 
+!freeram        = $7FA300
+!stripe_message_index = !freeram+2
+
 ; convert palette number into CCC format
 function pal(val) = (val-8)*2
 
@@ -64,6 +67,9 @@ endif
 
     ; get perk type
     jsr perk_index
+
+    ; set stripe message
+    sta.l !stripe_message_index
 
     cmp #$00 : bne +
     jsr jump_ability

@@ -4,7 +4,8 @@
 
 incsrc "chars.asm"
 
-!ram_message_index = $7fa270 ; TODO: put as relative to freeram
+!freeram        = $7FA300
+!stripe_message_index = !freeram+2
 
 !header_size = 4
 !palette = $28
@@ -37,7 +38,7 @@ stripe_table:
 
 ; test
 main:
-    lda.l !ram_message_index
+    lda.l !stripe_message_index
 
     ; ensure index within bounds
     cmp.b #!message_count
