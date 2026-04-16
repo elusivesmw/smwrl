@@ -4,12 +4,7 @@
 
 incsrc "chars.asm"
 
-; test
-main:
-    lda #$00
-    jsr load_stripe
-    jsr write_stripe
-rtl
+!ram_message_index = $7fa270 ; TODO: put as relative to freeram
 
 !header_size = 4
 !palette = $28
@@ -17,8 +12,10 @@ rtl
 !curr_text = $02 ; scratch (2)
 !curr_len = $04 ; scratch (1)
 
+!message_count = 0
 macro stripe_message(label, message)
-    print "stripe_message written at PC: ", pc
+    !message_count #= !message_count+1
+    print "stripe_message ", "<label>", " written at PC: ", pc
     <label>:
         db $59,$09,$00 ; positioning, etc. ; TODO: parameterize
         db ((<label>_end-<label>_text)*2)-1; index of body
@@ -29,13 +26,27 @@ endmacro
 
 %stripe_message(elusive, "elusive .,*-!=:")
 %stripe_message(test2, "another message")
-%stripe_message(test3, "third message")
+%stripe_message(test3, "short")
+print "message_count ", "!message_count"
 
 print "stripe_table written at PC: ", pc
 stripe_table:
     dw elusive, elusive_text
-    dw test2, test2_text 
-    dw test3, test3_text 
+    dw test2, test2_text
+    dw test3, test3_text
+
+; test
+main:
+    lda.l !ram_message_index
+
+    ; ensure index within bounds
+    cmp.b #!message_count
+    bcs .return
+
+    jsr load_stripe
+    jsr write_stripe
+    .return:
+rtl
 
 ; input: A = index of message to load
 load_stripe:
