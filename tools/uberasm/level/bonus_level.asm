@@ -25,24 +25,30 @@ macro stripe_message(label, message)
     <label>_end:
 endmacro
 
-%stripe_message(elusive, "elusive .,*-!=:")
-%stripe_message(test2, "another message")
-%stripe_message(test3, "short")
+%stripe_message(jump_ability, "all jumps unlocked")
+%stripe_message(normal_jump, "normal jump height increased")
+%stripe_message(spin_jump, "spin jump height increased")
+%stripe_message(boost_jump, "boost jump height increased")
+%stripe_message(enable_carry, "carrying items now enabled")
 print "message_count ", "!message_count"
 
 print "stripe_table written at PC: ", pc
 stripe_table:
-    dw elusive, elusive_text
-    dw test2, test2_text
-    dw test3, test3_text
+    dw jump_ability, jump_ability_text
+    dw normal_jump, normal_jump_text
+    dw spin_jump, spin_jump_text
+    dw boost_jump, boost_jump_text
+    dw enable_carry, enable_carry_text
 
-; test
 main:
     lda.l !stripe_message_index
+    ; TODO: lda.l !perk_index
 
     ; ensure index within bounds
     cmp.b #!message_count
     bcs .return
+
+    ; TODO: load messages to write
 
     jsr load_stripe
     jsr write_stripe
