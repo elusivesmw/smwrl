@@ -25,9 +25,9 @@ incsrc "chars.asm"
 ; ignore E, HHH, D, R for now
 ; EHHHYXyy yyyxxxxx DRLLLLLL llllllll
 function xb(x) = ((x&$FF)<<8)|($FF&(x>>8)) ; swap high and low bytes
-function header1(x,y) = xb($5000|((y<<5)|x)) ; location
+function header1(x,y) = xb($5000|((y&%00011111)<<5)|((y&%00100000)<<6)|(x&%00011111)|((x&%00100000)<<5)) ; location
 function header2(l) = xb(l) ; just length for now (implied horizontal and non-rle behavior)
-print "asdf ", hex(header1(19,02)), " asdf"
+print "test math", hex(header1(9, 40))
 
 !message_count = 0
 macro stripe_message(label,x,y,message)
@@ -44,7 +44,7 @@ macro stripe_message(label,x,y,message)
     <label>_end:
 endmacro
 
-%stripe_message(jump_ability, 19, 2,"all jumps unlocked")
+%stripe_message(jump_ability, 9, 40,"all jumps unlocked")
 %stripe_message(normal_jump, 9, 40, "normal jump height increased")
 %stripe_message(spin_jump, 9, 40, "spin jump height increased")
 %stripe_message(boost_jump, 9, 40, "boost jump height increased")
