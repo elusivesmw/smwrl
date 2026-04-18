@@ -8,10 +8,12 @@ incsrc "chars.asm"
 !perk_index     = !freeram+2
 
 !header_size = 4
-!palette = $28
+; current pointers (8 bytes)
 !curr_header = $00 ; scratch (2)
 !curr_text = $02 ; scratch (2)
-!curr_len = $04 ; scratch (1)
+!curr_palette = $04 ; scratch (2)
+!curr_reserved = $06 ; scratch (2) reserved for future use
+!curr_len = $08 ; scratch (1)
 
 ; EHHHYXyy yyyxxxxx DRLLLLLL llllllll
 ; E: End of data. Setting this ignores everything after and ends the upload routine.
@@ -30,32 +32,43 @@ function xoff(x) = (x&%00011111)|((x&%00100000)<<5) ; fixes the gap between X by
 function stripe_header1(x,y) = xb($5000|yoff(y)|xoff(x)) ; layer (3), location
 function stripe_header2(l) = xb(l) ; just length for now (implied horizontal and non-rle behavior)
 
+; palette num to yxpccctt
+function pal(p) = ($20|(p<<2))
+
 !message_count = 0
-macro stripe_message(label,x,y,message)
+macro stripe_message(label,x,y,message,palette)
     !message_count #= !message_count+1
     print "stripe_message ", "<label>", " written at PC: ", pc
     <label>:
         dw stripe_header1(<x>,<y>) ; position
-        dw stripe_header2(((<label>_end-<label>_text)*2)-1) ; length
+        dw stripe_header2(((<label>_palette-<label>_text)*2)-1) ; length
     <label>_text:
         db "<message>"
+    <label>_palette:
+        db pal(<palette>)
+    <label>_reserved:
+        db $00
     <label>_end:
 endmacro
 
-%stripe_message(jump_ability, 9, 40,"all jumps unlocked")
-%stripe_message(normal_jump, 9, 41, "normal jump height increased")
-%stripe_message(spin_jump, 9, 40, "spin jump height increased")
-%stripe_message(boost_jump, 9, 40, "boost jump height increased")
-%stripe_message(enable_carry, 9, 40, "carrying items now enabled")
+%stripe_message(jump_ability, 7, 40,"all jumps unlocked", 3)
+%stripe_message(normal_jump, 2, 40, "normal jump height increased", 2)
+%stripe_message(spin_jump, 3, 40, "spin jump height increased", 2)
+%stripe_message(boost_jump, 3, 40, "boost jump height increased", 3)
+%stripe_message(enable_carry, 3, 40, "carrying items now enabled", 2)
 print "message_count ", "!message_count"
+
+macro table_entry(label)
+    dw <label>, <label>_text, <label>_palette, <label>_reserved 
+endmacro
 
 print "stripe_table written at PC: ", pc
 stripe_table:
-    dw jump_ability, jump_ability_text
-    dw normal_jump, normal_jump_text
-    dw spin_jump, spin_jump_text
-    dw boost_jump, boost_jump_text
-    dw enable_carry, enable_carry_text
+    %table_entry(jump_ability)
+    %table_entry(normal_jump)
+    %table_entry(spin_jump)
+    %table_entry(boost_jump)
+    %table_entry(enable_carry)
 
 print "perk_msgs written at PC: ", pc
 perk_msgs:
@@ -68,37 +81,35 @@ perk_msgs:
 
 perk_00_msgs:
     lda #$00
-    jsr load_stripe
-    jsr write_stripe
+    jsr write_msg
     ; example of writing a second message
-    lda #$01
-    jsr load_stripe
-    jsr write_stripe
+    ;lda #$01
+    ;jsr write_msg
 rts
+
 perk_01_msgs:
     lda #$01
-    jsr load_stripe
-    jsr write_stripe
+    jsr write_msg
 rts
+
 perk_02_msgs:
     lda #$02
-    jsr load_stripe
-    jsr write_stripe
+    jsr write_msg
 rts
+
 perk_03_msgs:
     lda #$03
-    jsr load_stripe
-    jsr write_stripe
+    jsr write_msg
 rts
+
 perk_04_msgs:
     lda #$04
-    jsr load_stripe
-    jsr write_stripe
+    jsr write_msg
 rts
+
 perk_05_msgs:
     lda #$05
-    jsr load_stripe
-    jsr write_stripe
+    jsr write_msg
 rts
 
 
@@ -110,8 +121,7 @@ main:
     bcs .return
 
     ; load messages to write
-    wdm
-    asl
+    asl ; *2 one dw pointer per entry = 2 bytes
     tax
     jsr (perk_msgs,x)
 
@@ -119,20 +129,33 @@ main:
 rtl
 
 
+; input: A = index of message write
+write_msg:
+    jsr load_stripe
+    jsr write_stripe
+rts
+
 ; input: A = index of message to load
 load_stripe:
     rep #$20 ; 16 bit A
     and #$00FF ; clear high byte of 16 bit A
-    asl #2 ; *4 two dw pointers per entry = 4 bytes
+    asl #3 ; *8 four dw pointers per entry = 8 bytes
     tax
+
     lda.w stripe_table,x  ; header pointer
     sta.w !curr_header
-    
+
     lda.w stripe_table+2,x ; text pointer
     sta.w !curr_text
+
+    lda.w stripe_table+4,x ; palette pointer
+    sta.w !curr_palette
+
+    lda.w stripe_table+6,x ; reserved pointer
+    sta.w !curr_reserved
+
     sep #$20 ; 8 bit A
 rts
-
 
 ; input: A = index of message to write
 write_stripe:
@@ -145,7 +168,8 @@ write_stripe:
     inx : iny
     cpy.b #!header_size
     bmi .header
-
+ 
+    ; TODO: look into doing this part in the load_stripe routine
     ldy #$03
     lda (!curr_header),y ; go to last byte of header
     inc : lsr ; /2 = text length
@@ -158,7 +182,7 @@ write_stripe:
     sta $7F837D,x
     inx
 
-    lda #!palette ; copy palette byte
+    lda (!curr_palette) ; copy palette byte
     sta $7F837D,x
     inx : iny
 
