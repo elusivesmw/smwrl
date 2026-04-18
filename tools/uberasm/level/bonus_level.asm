@@ -5,7 +5,7 @@
 incsrc "chars.asm"
 
 !freeram        = $7FA300
-!stripe_message_index = !freeram+2
+!perk_index     = !freeram+2
 
 !header_size = 4
 !palette = $28
@@ -29,7 +29,6 @@ function yoff(y) = ((y&%00011111)<<5)|((y&%00100000)<<6) ; fixes the gap between
 function xoff(x) = (x&%00011111)|((x&%00100000)<<5) ; fixes the gap between X bytes in "Xyyyyyxxxxx"
 function stripe_header1(x,y) = xb($5000|yoff(y)|xoff(x)) ; layer (3), location
 function stripe_header2(l) = xb(l) ; just length for now (implied horizontal and non-rle behavior)
-print "test math", hex(stripe_header1(9, 40))
 
 !message_count = 0
 macro stripe_message(label,x,y,message)
@@ -44,7 +43,7 @@ macro stripe_message(label,x,y,message)
 endmacro
 
 %stripe_message(jump_ability, 9, 40,"all jumps unlocked")
-%stripe_message(normal_jump, 9, 40, "normal jump height increased")
+%stripe_message(normal_jump, 9, 41, "normal jump height increased")
 %stripe_message(spin_jump, 9, 40, "spin jump height increased")
 %stripe_message(boost_jump, 9, 40, "boost jump height increased")
 %stripe_message(enable_carry, 9, 40, "carrying items now enabled")
@@ -58,26 +57,72 @@ stripe_table:
     dw boost_jump, boost_jump_text
     dw enable_carry, enable_carry_text
 
+print "perk_msgs written at PC: ", pc
+perk_msgs:
+    dw perk_00_msgs
+    dw perk_01_msgs
+    dw perk_02_msgs
+    dw perk_03_msgs
+    dw perk_04_msgs
+    dw perk_05_msgs
+
+perk_00_msgs:
+    lda #$00
+    jsr load_stripe
+    jsr write_stripe
+    ; example of writing a second message
+    lda #$01
+    jsr load_stripe
+    jsr write_stripe
+rts
+perk_01_msgs:
+    lda #$01
+    jsr load_stripe
+    jsr write_stripe
+rts
+perk_02_msgs:
+    lda #$02
+    jsr load_stripe
+    jsr write_stripe
+rts
+perk_03_msgs:
+    lda #$03
+    jsr load_stripe
+    jsr write_stripe
+rts
+perk_04_msgs:
+    lda #$04
+    jsr load_stripe
+    jsr write_stripe
+rts
+perk_05_msgs:
+    lda #$05
+    jsr load_stripe
+    jsr write_stripe
+rts
 
 
 main:
-    lda.l !stripe_message_index
-    ; TODO: lda.l !perk_index
+    lda.l !perk_index
 
     ; ensure index within bounds
     cmp.b #!message_count
     bcs .return
 
-    ; TODO: load messages to write
+    ; load messages to write
+    wdm
+    asl
+    tax
+    jsr (perk_msgs,x)
 
-    jsr load_stripe
-    jsr write_stripe
     .return:
 rtl
+
 
 ; input: A = index of message to load
 load_stripe:
     rep #$20 ; 16 bit A
+    and #$00FF ; clear high byte of 16 bit A
     asl #2 ; *4 two dw pointers per entry = 4 bytes
     tax
     lda.w stripe_table,x  ; header pointer
