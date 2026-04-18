@@ -8,12 +8,24 @@ incsrc "chars.asm"
 !perk_index     = !freeram+2
 
 !header_size = 4
-; current pointers (8 bytes)
+; current table pointers (8 bytes)
 !curr_header = $00 ; scratch (2)
 !curr_text = $02 ; scratch (2)
 !curr_palette = $04 ; scratch (2)
 !curr_reserved = $06 ; scratch (2) reserved for future use
 !curr_len = $08 ; scratch (1)
+; current variable header values
+!curr_var_header = $00 ; (4)
+!curr_var_value = $04 ; ...
+!curr_var_palette = $05 ; ...
+
+; ram setup
+!saveram        = $7FA200
+!jump_flags     = !saveram+0
+!jump_normal    = !saveram+1
+!jump_spin      = !saveram+2
+!jump_boost     = !saveram+3
+!disable_carry  = !saveram+4
 
 ; EHHHYXyy yyyxxxxx DRLLLLLL llllllll
 ; E: End of data. Setting this ignores everything after and ends the upload routine.
@@ -35,40 +47,49 @@ function stripe_header2(l) = xb(l) ; just length for now (implied horizontal and
 ; palette num to yxpccctt
 function pal(p) = ($20|(p<<2))
 
+macro stripe_header(label,x,y,len)
+    <label>:
+        dw stripe_header1(<x>,<y>)
+        dw stripe_header2(<len>)
+endmacro
+
 !message_count = 0
 macro stripe_message(label,x,y,message,palette)
     !message_count #= !message_count+1
     print "stripe_message ", "<label>", " written at PC: ", pc
-    <label>:
-        dw stripe_header1(<x>,<y>) ; position
-        dw stripe_header2(((<label>_palette-<label>_text)*2)-1) ; length
-    <label>_text:
+    %stripe_header(<label>,<x>,<y>,((.palette-.text)*2)-1) ; length
+    .text:
         db "<message>"
-    <label>_palette:
+    .palette:
         db pal(<palette>)
-    <label>_reserved:
+    .reserved:
         db $00
-    <label>_end:
+    .end:
 endmacro
 
-%stripe_message(jump_ability, 7, 40,"all jumps unlocked", 3)
-%stripe_message(normal_jump, 2, 40, "normal jump height increased", 2)
-%stripe_message(spin_jump, 3, 40, "spin jump height increased", 2)
-%stripe_message(boost_jump, 3, 40, "boost jump height increased", 3)
-%stripe_message(enable_carry, 3, 40, "carrying items now enabled", 2)
+%stripe_message(msg0, 7, 40, "all jumps unlocked", 3)
+%stripe_message(msg1, 2, 40, "normal jump height increased", 2)
+%stripe_message(msg2, 3, 40, "spin jump height increased", 2)
+%stripe_message(msg3, 3, 40, "boost jump height increased", 3)
+%stripe_message(msg4, 3, 40, "carrying items now enabled", 2)
 print "message_count ", "!message_count"
 
 macro table_entry(label)
     dw <label>, <label>_text, <label>_palette, <label>_reserved 
 endmacro
 
+; TODO: look into loading the header for variables from a table
+;macro stripe_var(label,x,y,var,palette)
+;    %stripe_header(label,x,y)
+;endmacro
+
 print "stripe_table written at PC: ", pc
 stripe_table:
-    %table_entry(jump_ability)
-    %table_entry(normal_jump)
-    %table_entry(spin_jump)
-    %table_entry(boost_jump)
-    %table_entry(enable_carry)
+    %table_entry(msg0)
+    %table_entry(msg1)
+    %table_entry(msg2)
+    %table_entry(msg3)
+    %table_entry(msg4)
 
 print "perk_msgs written at PC: ", pc
 perk_msgs:
@@ -82,14 +103,31 @@ perk_msgs:
 perk_00_msgs:
     lda #$00
     jsr write_msg
-    ; example of writing a second message
-    ;lda #$01
-    ;jsr write_msg
 rts
 
 perk_01_msgs:
     lda #$01
     jsr write_msg
+
+    ; write var
+wdm
+    ; header1
+    lda #$59
+    sta $00
+    lda #$29
+    sta $01
+    ; header2
+    stz $02
+    lda #$01
+    sta $03
+    ; var address
+    lda !jump_normal
+    sta $04
+    ; var palette
+    lda #$38
+    sta $05
+    ; actually write
+    jsr write_var
 rts
 
 perk_02_msgs:
@@ -127,6 +165,40 @@ main:
 
     .return:
 rtl
+
+; input: $00-$03 = header values
+; $04 = tile num
+; $05 = tile palette
+write_var:
+wdm
+    lda $7F837B : tax ; get current stripe index
+
+    ldy #$00 ; number of header bytes written
+    .header:
+    lda.b !curr_var_header,y ; copy header byte - TODO: FIX WARNING HERE
+    sta $7F837D,x
+    inx : iny
+    cpy.b #!header_size
+    bmi .header
+
+    ; reset y
+    ldy #$00 ; number of tiles written
+    .body
+    lda.b !curr_var_value ; copy text byte
+    sta $7F837D,x
+    inx
+
+    lda.b !curr_var_palette; copy palette byte
+    sta $7F837D,x
+    inx : iny
+
+    ;cpy #$01 ; hardcode text length to 1
+    ;bmi .body
+
+    lda #$FF ; write $FF as the ending byte
+    sta $7F837D,x
+    txa : sta $7F837B ; store stripe end index
+rts
 
 
 ; input: A = index of message write
