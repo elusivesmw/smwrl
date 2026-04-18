@@ -25,20 +25,19 @@ incsrc "chars.asm"
 ; ignore E, HHH, D, R for now
 ; EHHHYXyy yyyxxxxx DRLLLLLL llllllll
 function xb(x) = ((x&$FF)<<8)|($FF&(x>>8)) ; swap high and low bytes
-function header1(x,y) = xb($5000|((y&%00011111)<<5)|((y&%00100000)<<6)|(x&%00011111)|((x&%00100000)<<5)) ; location
-function header2(l) = xb(l) ; just length for now (implied horizontal and non-rle behavior)
-print "test math", hex(header1(9, 40))
+function yoff(y) = ((y&%00011111)<<5)|((y&%00100000)<<6) ; fixes the gap between Y bytes in "YXyyyyy"
+function xoff(x) = (x&%00011111)|((x&%00100000)<<5) ; fixes the gap between X bytes in "Xyyyyyxxxxx"
+function stripe_header1(x,y) = xb($5000|yoff(y)|xoff(x)) ; layer (3), location
+function stripe_header2(l) = xb(l) ; just length for now (implied horizontal and non-rle behavior)
+print "test math", hex(stripe_header1(9, 40))
 
 !message_count = 0
 macro stripe_message(label,x,y,message)
     !message_count #= !message_count+1
     print "stripe_message ", "<label>", " written at PC: ", pc
     <label>:
-        ;db $59,$09,$00 ; positioning, etc. ; TODO: parameterize
-        ;db ((<label>_end-<label>_text)*2)-1; index of body
-
-        dw header1(<x>,<y>) ; position
-        dw header2(((<label>_end-<label>_text)*2)-1) ; length
+        dw stripe_header1(<x>,<y>) ; position
+        dw stripe_header2(((<label>_end-<label>_text)*2)-1) ; length
     <label>_text:
         db "<message>"
     <label>_end:
