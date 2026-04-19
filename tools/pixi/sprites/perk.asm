@@ -300,7 +300,6 @@ rts
 
 three_up:
     ; add three live
-    wdm
     lda $0DBE
     clc : adc #3
     sta $0DBE

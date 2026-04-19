@@ -15,7 +15,7 @@ incsrc "chars.asm"
 !curr_reserved = $06 ; scratch (2) reserved for future use
 !curr_len = $08 ; scratch (1)
 ; current variable header values
-!curr_var_header = $00 ; (4)
+!curr_var_header = $0000 ; (4)
 !curr_var_value = $04 ; ...
 !curr_var_palette = $05 ; ...
 
@@ -72,6 +72,8 @@ endmacro
 %stripe_message(msg2, 3, 40, "spin jump height increased", 2)
 %stripe_message(msg3, 3, 40, "boost jump height increased", 3)
 %stripe_message(msg4, 3, 40, "carrying items now enabled", 2)
+%stripe_message(msg5, 14, 40, "1up", 2)
+%stripe_message(msg6, 14, 40, "3up", 2)
 print "message_count ", "!message_count"
 
 macro table_entry(label)
@@ -90,6 +92,8 @@ stripe_table:
     %table_entry(msg2)
     %table_entry(msg3)
     %table_entry(msg4)
+    %table_entry(msg5)
+    %table_entry(msg6)
 
 print "perk_msgs written at PC: ", pc
 perk_msgs:
@@ -99,6 +103,7 @@ perk_msgs:
     dw perk_03_msgs
     dw perk_04_msgs
     dw perk_05_msgs
+    dw perk_06_msgs
 
 perk_00_msgs:
     lda #$00
@@ -110,7 +115,6 @@ perk_01_msgs:
     jsr write_msg
 
     ; write var
-wdm
     ; header1
     lda #$59
     sta $00
@@ -150,6 +154,19 @@ perk_05_msgs:
     jsr write_msg
 rts
 
+perk_06_msgs:
+wdm
+    lda #$06
+    jsr write_msg
+rts
+
+
+init:
+    ; clear previously selected perk index
+    lda #$FF
+    sta !perk_index
+rtl
+
 
 main:
     lda.l !perk_index
@@ -170,12 +187,11 @@ rtl
 ; $04 = tile num
 ; $05 = tile palette
 write_var:
-wdm
     lda $7F837B : tax ; get current stripe index
 
     ldy #$00 ; number of header bytes written
     .header:
-    lda.b !curr_var_header,y ; copy header byte - TODO: FIX WARNING HERE
+    lda.w !curr_var_header,y ; copy header byte
     sta $7F837D,x
     inx : iny
     cpy.b #!header_size
