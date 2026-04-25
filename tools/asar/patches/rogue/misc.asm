@@ -23,13 +23,15 @@ org $018898
 bra 5
 nop #5
 
-; TODO: disabled showing bonus stars
+; disable showing bonus stars
+org $01C17A
+nop #4
 ; disable course clear bonus counter
 org $05CD79
 db $80
 ; disable course clear timer x 50 points tilemap
 org $05CC42
-NOP #31
+nop #31
 ; disable course clear score tallying and drumroll
 org $05CDD8
 db $80
