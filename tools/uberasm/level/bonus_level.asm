@@ -71,9 +71,10 @@ endmacro
 %stripe_message(msg1, 2, 40, "normal jump height increased", 2)
 %stripe_message(msg2, 3, 40, "spin jump height increased", 2)
 %stripe_message(msg3, 3, 40, "boost jump height increased", 3)
-%stripe_message(msg4, 3, 40, "carrying items now enabled", 2)
-%stripe_message(msg5, 14, 40, "1up", 2)
-%stripe_message(msg6, 14, 40, "3up", 2)
+%stripe_message(msg4, 6, 40, "p-speed now enabled", 2)
+%stripe_message(msg5, 3, 40, "carrying items now enabled", 2)
+%stripe_message(msg6, 14, 40, "1up", 2)
+%stripe_message(msg7, 14, 40, "3up", 2)
 print "message_count ", "!message_count"
 
 macro table_entry(label)
@@ -94,6 +95,7 @@ stripe_table:
     %table_entry(msg4)
     %table_entry(msg5)
     %table_entry(msg6)
+    %table_entry(msg7)
 
 print "perk_msgs written at PC: ", pc
 perk_msgs:
@@ -104,6 +106,7 @@ perk_msgs:
     dw perk_04_msgs
     dw perk_05_msgs
     dw perk_06_msgs
+    dw perk_07_msgs
 
 perk_00_msgs:
     lda #$00
@@ -155,8 +158,12 @@ perk_05_msgs:
 rts
 
 perk_06_msgs:
-wdm
     lda #$06
+    jsr write_msg
+rts
+
+perk_07_msgs:
+    lda #$07
     jsr write_msg
 rts
 

@@ -8,15 +8,16 @@
 
 
 ; ram setup
-!saveram        = $7FA200
-!jump_flags     = !saveram+0
-!jump_normal    = !saveram+1
-!jump_spin      = !saveram+2
-!jump_boost     = !saveram+3
-!disable_carry  = !saveram+4
+!saveram            = $7FA200
+!jump_flags         = !saveram+0
+!jump_normal        = !saveram+1
+!jump_spin          = !saveram+2
+!jump_boost         = !saveram+3
+!disable_p_speed    = !saveram+4
+!disable_carry      = !saveram+5
 
-!freeram        = $7FA300
-!perk_index     = !freeram+2
+!freeram            = $7FA300
+!perk_index         = !freeram+2
 
 ; convert palette number into CCC format
 function pal(val) = (val-8)*2
@@ -87,10 +88,14 @@ endif
     jmp .cleanup
 +
     cmp #$04 : bne +
-    jsr enable_carry
+    jsr enable_p_speed
     jmp .cleanup
 +
     cmp #$05 : bne +
+    jsr enable_carry
+    jmp .cleanup
++
+    cmp #$06 : bne +
     jsr one_up
     jmp .cleanup
 +
@@ -150,11 +155,11 @@ graphics:
 rts
 
 palette:
-    db pal($0C),pal($0C),pal($0C),pal($0C),pal($08),pal($0D),pal($0A)
+    db pal($0C),pal($0C),pal($0C),pal($0C),pal($0B),pal($08),pal($0D),pal($0A)
 y_offset:
     db 0,0,0,-1,-2,-3,-2,-1
 tile_map:
-    db $80,$82,$84,$86,$88,$8A,$8C
+    db $80,$82,$84,$86,$88,$8A,$8C,$8E
 
 sparkle:
     ; how often to spawn a sparkle
@@ -293,6 +298,18 @@ boost_jump:
     .return:
 rts
 
+enable_p_speed:
+    ; clear disable p speed flag
+    lda #$00
+    sta !disable_p_speed
+rts
+
+enable_carry:
+    ; clear disable carry flag
+    lda #$00
+    sta !disable_carry
+rts
+
 one_up:
     ; add one live
     inc $0DBE
@@ -303,12 +320,6 @@ three_up:
     lda $0DBE
     clc : adc #3
     sta $0DBE
-rts
-
-enable_carry:
-    ; clear disable carry flag
-    lda #$00
-    sta !disable_carry
 rts
 
 placeholder:

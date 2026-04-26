@@ -14,11 +14,17 @@ The bonus game levels (`level 00` and `level 100`, depending on level entrance n
 - 01: Increase normal jump height (common)
 - 02: Increase spin jump height (common)
 - 03: Increase boost height - (height gained from stomping on an enemy)
-- 04: Ability to carry items (rare)
-- 05: 1up (rare)
-- 06: 3up (epic)
+- 04: P-Speed
+- 05: Ability to carry items (rare)
+- 06: 1up (rare)
+- 07: 3up (epic)
 
 Rarity is not programmed yet.
+
+### Future Perks
+
+- Swimming ability
+- ...
 
 ### How it works
 
@@ -35,6 +41,13 @@ The abilities themselves are a sprite `perk.asm` that looks like a Yoshi coin. C
 **TODO:** Come up with a system to classify perks with a defined probability, remove them from availability after collecting, and prevent duplicate spawns.
 
 **TODO:** Prevent Yoshi from eating perks without it. Currently it gives a one up, but it should either not be able to be eaten, or should give the perk inside.
+
+## Increasing difficulty
+
+Some things need to be done so that lives are harder to come by:
+
+- No 1ups from enemy combos (probably don't need points either)
+- Limit green mushrooms and moons
 
 ## Permadeath
 
