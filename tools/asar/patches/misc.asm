@@ -1,8 +1,3 @@
-
-; bonus game: disable input immediately when the music starts
-org $00A1EF
-db $44
-
 ; TODO: fix small mario yoshi peace sign pose
 
 ; disable LR scrolling

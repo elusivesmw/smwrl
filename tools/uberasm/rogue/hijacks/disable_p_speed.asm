@@ -1,8 +1,10 @@
+pushpc
+
 ; disable p meter sprites
 org $00D96A
     autoclean jml disable_p_speed 
 
-freecode
+pullpc
 
 disable_p_speed:
     lda !disable_p_speed

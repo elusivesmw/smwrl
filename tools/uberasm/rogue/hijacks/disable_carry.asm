@@ -1,6 +1,8 @@
+pushpc
+
 ; disable carrying sprites
 org $01AA5E
-    autoclean jml disable_carry 
+    jml disable_carry 
     nop #2
 
 ; disable picking up throwblocks
@@ -8,7 +10,7 @@ org $00F26F
     autoclean jml disable_throwblock 
     nop #2
 
-freecode
+pullpc
 
 disable_carry:
     lda $1470

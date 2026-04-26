@@ -11,3 +11,4 @@
 !debug_out          = !freeram+0
 !frame_counter      = !freeram+1
 !perk_index         = !freeram+2
+!trigger_bonus_game = !freeram+3
