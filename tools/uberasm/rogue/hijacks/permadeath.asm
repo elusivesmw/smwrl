@@ -5,12 +5,14 @@
 !sram_file_start = $700000
 !sram_copy_start = $7001AD
 
+pushpc
+
 org $009785
-    autoclean jml erase_current_file
+    jml erase_current_file
     nop #2
     sec
 
-freecode
+pullpc
 
 erase_current_file:
     ; get current save file number (0, 1, 2)

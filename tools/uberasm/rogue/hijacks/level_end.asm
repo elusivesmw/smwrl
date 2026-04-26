@@ -1,6 +1,8 @@
 !freeram = $7FA300
 !trigger_bonus_game = !freeram+3
 
+pushpc
+
 ; disable showing bonus stars
 org $01C17A
 nop #4
@@ -31,7 +33,7 @@ org $05CC84
     autoclean jml course_clear
     nop
 
-freecode
+pullpc
 
 course_clear:
     lda !trigger_bonus_game

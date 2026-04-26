@@ -4,21 +4,27 @@
 ; 02 - spin
 ; 03 - both
 
+pushpc
+
 org $00D645
-    autoclean jml try_spin_jump
+    jml try_spin_jump
 
 org $00D65E
-    autoclean jml try_normal_jump
+    jml try_normal_jump
     nop #2
 
 org $01AA3B
     autoclean jml boost_jump
     nop #2
+    
+pullpc
 
 ; offset from vanilla table (initial nerf amount)
 !offset_normal = 16
 !offset_spin = 10
 !offset_boost = 24
+
+pushpc
 
 ; index based on speed
 ; even - normal jump
@@ -26,12 +32,11 @@ org $01AA3B
 
 ; params: X contains table index based on speed and jump type
 ; return: A with mario's jump height
-
 org $00D663
-    autoclean jml get_height
+    jml get_height
     nop
 
-freecode
+pullpc
 
 ; ----
 

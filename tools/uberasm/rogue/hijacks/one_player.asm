@@ -1,3 +1,5 @@
+pushpc
+
 ; skip player select
 org $009DFA
     jmp $9E0A
@@ -11,3 +13,5 @@ org $009E0A
 ; don't change tilemap to 1/2 player select menu
 org $009D24
     ldy #$00
+
+pullpc
