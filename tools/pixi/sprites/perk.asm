@@ -6,18 +6,7 @@
 !jump_max_inc   = 32 ; normal/spin increment max
 !boost_max_inc  = 24 ; boost increment max
 
-
-; ram setup
-!saveram            = $7FA200
-!jump_flags         = !saveram+0
-!jump_normal        = !saveram+1
-!jump_spin          = !saveram+2
-!jump_boost         = !saveram+3
-!disable_p_speed    = !saveram+4
-!disable_carry      = !saveram+5
-
-!freeram            = $7FA300
-!perk_index         = !freeram+2
+incsrc "../../uberasm/rogue/ram.asm"
 
 ; convert palette number into CCC format
 function pal(val) = (val-8)*2
