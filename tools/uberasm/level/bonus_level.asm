@@ -19,13 +19,12 @@ incsrc "chars.asm"
 !curr_var_value = $04 ; ...
 !curr_var_palette = $05 ; ...
 
-; ram setup
-!saveram        = $7FA200
-!jump_flags     = !saveram+0
-!jump_normal    = !saveram+1
-!jump_spin      = !saveram+2
-!jump_boost     = !saveram+3
-!disable_carry  = !saveram+4
+; ram setup (perks with message that may vary)
+!saveram            = $7FA200
+!jump_flags         = !saveram+0
+!jump_normal        = !saveram+1
+!jump_spin          = !saveram+2
+!jump_boost         = !saveram+3
 
 ; EHHHYXyy yyyxxxxx DRLLLLLL llllllll
 ; E: End of data. Setting this ignores everything after and ends the upload routine.

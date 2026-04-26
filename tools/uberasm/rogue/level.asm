@@ -1,14 +1,17 @@
-init:
-    ; TODO: don't set bonus flag until after the level is beaten,
-    ; which means this code will go elsewhere
+!freeram            = $7FA300
+!trigger_bonus_game = !freeram+3
 
+init:
     ; set bonus game flag if level hasn't been beaten yet
     lda $13BF : tax ; get translevel number as index
     lda $1EA2,x : and #$80 ; check level beaten flag
     bne .return
 
     ; set bonus game flag
-    lda #$01 : sta $1425
+    ; NOTE: can't set the actual flag at $1425 directly since it interupts sublevel loading
+    ;lda #$01 : sta $1425
+    ; instead, look for this flag at course clear
+    lda #$01 : sta !trigger_bonus_game
     ; TODO: other flags related to which bonus room to go to
     .return:
 rtl

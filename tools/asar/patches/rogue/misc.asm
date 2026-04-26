@@ -23,19 +23,6 @@ org $018898
 bra 5
 nop #5
 
-; disable showing bonus stars
-org $01C17A
-nop #4
-; disable course clear bonus counter
-org $05CD79
-db $80
-; disable course clear timer x 50 points tilemap
-org $05CC42
-nop #31
-; disable course clear score tallying and drumroll
-org $05CDD8
-db $80
-
 ; disable yoshi rescue message
 org $01EC36
 db $80
