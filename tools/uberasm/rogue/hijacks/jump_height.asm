@@ -4,6 +4,11 @@
 ; 02 - spin
 ; 03 - both
 
+; offset from vanilla table (initial nerf amount)
+!offset_normal = 16
+!offset_spin = 10
+!offset_boost = 24
+
 pushpc
 
 org $00D645
@@ -16,15 +21,6 @@ org $00D65E
 org $01AA3B
     autoclean jml boost_jump
     nop #2
-    
-pullpc
-
-; offset from vanilla table (initial nerf amount)
-!offset_normal = 16
-!offset_spin = 10
-!offset_boost = 24
-
-pushpc
 
 ; index based on speed
 ; even - normal jump
@@ -79,20 +75,20 @@ get_height:
     txa
     bit #$01
     bne .odd
-.even
+    .even:
     pla
     sec : sbc !jump_normal
     bra +
-.odd
+    .odd:
     pla
     sec : sbc !jump_spin
-+
+    +
     sta !debug_out ; TODO: remove
     bpl .return
     ; save
     sta $7d
-.return
-    jml $00D667
+    .return
+    jml $00D668
 
 jump_height:
     db $B0+!offset_normal,$B6+!offset_spin,$AE+!offset_normal,$B4+!offset_spin,$AB+!offset_normal,$B2+!offset_spin,$A9+!offset_normal,$B0+!offset_spin
@@ -105,12 +101,19 @@ boost_jump:
     lda #$A8+!offset_boost
     sec : sbc !jump_boost
     sta !debug_out ; TODO: remove
-.save
+    .save:
     sta $7d
-.return
+    .return:
     jml $01AA41
 
 ; ----
+
+; TODO: yoshi dismount with normal jump screwed up by setting the in-air flag to $0B here
+;LDA.b #$0B                 ;$00D668
+;STA $72                    ;$00D67D
+; because a normal jump was detected, but we are still dismounting yoshi at
+;LDY $72                    ;$01EDB3
+;BNE CODE_01EDC1            ;$01EDB5
 
 ; TODO: tie to normal jump height
 ;LDA.b #$B0                  ;$01DA33    | jumping off a rope
