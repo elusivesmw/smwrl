@@ -19,14 +19,23 @@ MarioInside:
     cmp #$08
     bcs Return
 
-    ; end bonus game
-    lda #$44
-    sta $14AB
-    ; TODO: maybe disable input immediately
-    ; and maybe don't play the outro sound effect
+    ; enter door SFX
+    lda #$0F : sta $1DFC
 
-    lda #$0F ; enter door SFX
-    sta $1DFC
+    ; end bonus game (superfluous)
+    lda #$00 : sta $14AB
+
+    ; disable input (superfluous)
+    stz $15 : stz $16 : stz $17 : stz $18
+
+    ; disable animation (superfluous)
+    lda #$0D : sta $71
+
+    ; return to overworld
+    ; NOTE: $0DD5 already contains how the level was beaten (normal or secret)
+    inc $1DE9 ; set activate event
+    lda #$0B : sta $0100 ; change game mode to 0B (fade to black)
+
 Return:
 rtl
 
