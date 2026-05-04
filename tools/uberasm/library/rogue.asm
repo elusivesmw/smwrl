@@ -23,3 +23,4 @@ endmacro
 %incsrc(hijacks, jump_height)
 %incsrc(hijacks, disable_p_speed)
 %incsrc(hijacks, disable_carry)
+%incsrc(hijacks, pipe_to_overworld)
