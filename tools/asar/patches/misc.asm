@@ -13,7 +13,7 @@ org $02A0AC
 bra 5
 nop #5
 
-; yellow koopa jump framerule, improve efficiency
+; yellow koopa jump framerule (1/4 frames -> 1/1 frames), improve efficiency
 org $018898
 bra 5
 nop #5

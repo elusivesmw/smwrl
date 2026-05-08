@@ -1,20 +1,23 @@
 ; GPS block list
 
+; regular muncher, with customizations
+301:0130    muncher.asm
+311:0130    muncher.asm
+
 ; instant kill
-301:0130	kill_muncher.asm
-311:0130	kill_muncher.asm
+; TODO:
 
 ; conditional solids
-303:0130	mario_solid.asm
-304:0130	sprite_solid.asm
+303:0130    mario_solid.asm
+304:0130    sprite_solid.asm
 
 ; on/off blocks
-320:0025	switch_block.asm
-321:0025	switch_block_reverse.asm
-322:0025	switch_block.asm
-323:0025	switch_block_reverse.asm
-324:0025	switch_block.asm
-325:0025	switch_block_reverse.asm
+320:0025    switch_block.asm
+321:0025    switch_block_reverse.asm
+322:0025    switch_block.asm
+323:0025    switch_block_reverse.asm
+324:0025    switch_block.asm
+325:0025    switch_block_reverse.asm
 
 ; bonus game
 31E:0025    exit_bonus_door.asm
