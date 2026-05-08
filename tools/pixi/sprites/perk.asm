@@ -1,12 +1,13 @@
+; import rogue defines
+incsrc "../../uberasm/rogue/ram.asm"
+
 ; config
 !this_sprite_num = $AF
 !sparkle        = 1 ; should perk sparkle?
-!perk_count     = 7 ; perks max index + 1
+!perk_count     = 9 ; perks max index + 1
 !inc_amount     = 2 ; how much to increase jump height by
 !jump_max_inc   = 32 ; normal/spin increment max
 !boost_max_inc  = 24 ; boost increment max
-
-incsrc "../../uberasm/rogue/ram.asm"
 
 ; convert palette number into CCC format
 function pal(val) = (val-8)*2
@@ -60,6 +61,7 @@ endif
     ; and store
     sta.l !perk_index
 
+    ; TODO: change this to a pointer table
     cmp #$00 : bne +
     jsr jump_ability
     jmp .cleanup
@@ -88,8 +90,12 @@ endif
     jsr one_up
     jmp .cleanup
 +
-    cmp #$06 : bne +
+    cmp #$07 : bne +
     jsr three_up
+    jmp .cleanup
++
+    cmp #$08 : bne +
+    jsr hiking_boots
     jmp .cleanup
 +
     cmp #$fe : bne .return
@@ -145,10 +151,12 @@ rts
 
 palette:
     db pal($0C),pal($0C),pal($0C),pal($0C),pal($0B),pal($08),pal($0D),pal($0A)
+    db pal($08)
 y_offset:
     db 0,0,0,-1,-2,-3,-2,-1
 tile_map:
     db $80,$82,$84,$86,$88,$8A,$8C,$8E
+    db $A0
 
 sparkle:
     ; how often to spawn a sparkle
@@ -309,6 +317,12 @@ three_up:
     lda $0DBE
     clc : adc #3
     sta $0DBE
+rts
+
+hiking_boots:
+    ; set muncher invinciblity flag
+    lda #$01
+    sta !muncher_inv
 rts
 
 placeholder:

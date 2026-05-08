@@ -6,6 +6,7 @@
 !jump_boost         = !saveram+3
 !disable_p_speed    = !saveram+4
 !disable_carry      = !saveram+5
+!muncher_inv        = !saveram+6
 
 !freeram            = $7FA300
 !debug_out          = !freeram+0

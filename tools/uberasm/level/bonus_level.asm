@@ -2,10 +2,11 @@
 ; https://www.smwcentral.net/?p=viewthread&t=93207
 ; https://jsfiddle.net/ankougo/vgkb8f3m/
 
+; import rogue defines
+incsrc "../../uberasm/rogue/ram.asm"
+; import char map
 incsrc "chars.asm"
 
-!freeram        = $7FA300
-!perk_index     = !freeram+2
 
 !header_size = 4
 ; current table pointers (8 bytes)
@@ -19,12 +20,6 @@ incsrc "chars.asm"
 !curr_var_value = $04 ; ...
 !curr_var_palette = $05 ; ...
 
-; ram setup (perks with message that may vary)
-!saveram            = $7FA200
-!jump_flags         = !saveram+0
-!jump_normal        = !saveram+1
-!jump_spin          = !saveram+2
-!jump_boost         = !saveram+3
 
 ; EHHHYXyy yyyxxxxx DRLLLLLL llllllll
 ; E: End of data. Setting this ignores everything after and ends the upload routine.
@@ -74,6 +69,7 @@ endmacro
 %stripe_message(msg5, 3, 40, "carrying items now enabled", 2)
 %stripe_message(msg6, 14, 40, "1up", 2)
 %stripe_message(msg7, 14, 40, "3up", 2)
+%stripe_message(msg8, 5, 40, "hiking boots obtained", 2)
 print "message_count ", "!message_count"
 
 macro table_entry(label)
@@ -95,6 +91,7 @@ stripe_table:
     %table_entry(msg5)
     %table_entry(msg6)
     %table_entry(msg7)
+    %table_entry(msg8)
 
 print "perk_msgs written at PC: ", pc
 perk_msgs:
@@ -106,6 +103,7 @@ perk_msgs:
     dw perk_05_msgs
     dw perk_06_msgs
     dw perk_07_msgs
+    dw perk_08_msgs
 
 perk_00_msgs:
     lda #$00
@@ -166,6 +164,10 @@ perk_07_msgs:
     jsr write_msg
 rts
 
+perk_08_msgs:
+    lda #$08
+    jsr write_msg
+rts
 
 init:
     ; clear previously selected perk index

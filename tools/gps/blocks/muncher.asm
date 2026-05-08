@@ -2,6 +2,12 @@
 ; Original filename: VanillaMuncher.asm
 ; https://www.smwcentral.net/?p=section&a=details&id=41222
 
+; customized by: elusive
+; added perk conditons (for now just hiking boots)
+
+; import rogue defines
+incsrc "../../uberasm/rogue/ram.asm"
+
 ; TODO: consider incorporating dacin's patch for accurate hitbox corners:
 ; https://www.smwcentral.net/?p=section&a=details&id=41170
 
@@ -66,8 +72,9 @@ MarioAbove:
     JMP Coin
     if !Damage_Top != 0
         CheckYoshi:
-        LDA $187A|!addr     ;\If player isn't riding yoshi, then hurt him.
-        BEQ Muncher         ;/
+        LDA $187A|!addr     ;\If player isn't riding yoshi,
+        ora.l !muncher_inv  ;|or has hiking boots perk,
+        BEQ Muncher         ;/then hurt him.
     endif
     AboveReturn:
 RTL                         ;>and return (as a solid)
