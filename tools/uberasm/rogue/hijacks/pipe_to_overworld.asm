@@ -15,10 +15,14 @@ pipe_to_overworld:
     beq .horiz
     ldx $97
     .horiz:
-    lda $19B8,X
 
-    ; check for level $0FF or $1FF
-    cmp #$FF
+    ; check for level $1FF
+    lda $19B8,X
+    cmp #$FF ; lo byte destination
+    bne .original
+    lda $19D8,X
+    and #$01 ; hi byte destination (format: HHHHwush)
+    cmp #$01
     bne .original
 
     ; return to overworld
