@@ -7,6 +7,8 @@ org $05DBBF
 
 pullpc
 
+!lm = #$04 ; lunar magic modified flag
+
 bonus_destination:
     cpy #$01        ; replaces table at $05DBA9
     bne .bonus
@@ -15,11 +17,32 @@ bonus_destination:
     bra .return
 
     .bonus:
-    ; TODO: define conditions that change which bonus room to go to
-    ; for now, always go to 100:
+    ; define conditions that change which bonus room to go to
+    ; get current level
+    wdm
+    lda $13BF
+    cmp #$24
+    bcc +
+    clc : adc #$DC ; add to get $24 to $100
+    +
+    ; A now contains the current translevel number
+    cmp #$01
+    bne .default
+
+    .level_01:
+    lda #$FF        ; lo byte destination
+    sta $19b8,x
+    lda #$00        ; hi byte destination (format: HHHHwush)
+    ora !lm
+    sta $19d8,x
+    bra .return
+
+    .default:
+    ; go to 100:
     lda #$00        ; lo byte destination
     sta $19b8,x
     lda #$01        ; hi byte destination (format: HHHHwush)
+    ora !lm
     sta $19d8,x
 
     .return:
