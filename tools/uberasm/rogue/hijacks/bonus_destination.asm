@@ -7,7 +7,19 @@ org $05DBBF
 
 pullpc
 
-!lm = #$04 ; lunar magic modified flag
+function hi(x) = (x>>8)&$FF
+;print "hi: ", hex(hi($1234))
+function lo(x) = x&$FF
+;print "lo: ", hex(lo($1234))
+
+; input: X should contain current screen number
+macro level_destination(level_num)
+    lda.b #lo(<level_num>)      ; lo byte destination
+    sta $19B8,x
+    lda.b #hi(<level_num>)      ; hi byte destination (format: HHHHwush)
+    ora #$04                    ; set modified by lunar magic flag
+    sta $19D8,x
+endmacro
 
 bonus_destination:
     cpy #$01        ; replaces table at $05DBA9
@@ -17,33 +29,23 @@ bonus_destination:
     bra .return
 
     .bonus:
-    ; define conditions that change which bonus room to go to
     ; get current level
-    wdm
     lda $13BF
     cmp #$24
     bcc +
     clc : adc #$DC ; add to get $24 to $100
     +
     ; A now contains the current translevel number
+    ; go to bonus room based on translevel number
     cmp #$01
     bne .default
 
     .level_01:
-    lda #$FF        ; lo byte destination
-    sta $19b8,x
-    lda #$00        ; hi byte destination (format: HHHHwush)
-    ora !lm
-    sta $19d8,x
+    %level_destination($00FF)
     bra .return
 
     .default:
-    ; go to 100:
-    lda #$00        ; lo byte destination
-    sta $19b8,x
-    lda #$01        ; hi byte destination (format: HHHHwush)
-    ora !lm
-    sta $19d8,x
+    %level_destination($0100)
 
     .return:
     inc $141A   ; inc sublevel count
@@ -72,7 +74,7 @@ bonus_destination:
 
 ; reference lunar magic hijack
 ;03BB00  8D B8 19       sta $19b8       ; take A as level hi byte
-;03BB03  9C D8 19       stz $19d8       ; clear out low byte
+;03BB03  9C D8 19       stz $19d8       ; clear out lo byte
 ;03BB06  9C 93 1B       stz $1b93       ; clear secondary exit flag
 ;03BB09  EE 1A 14       inc $141a       ; inc sublevel counter
 ;03BB0C  64 95          stz $95         ; reset player position...

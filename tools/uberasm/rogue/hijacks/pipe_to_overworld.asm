@@ -7,8 +7,12 @@ org $00D273
 
 pullpc
 
+; NOTE: lunar magic secondary exits can now trigger a return to the overworld,
+; but require you to explicitly set the overworld action (do nothing, normal exit, secret exit, etc.)
+; the advantage of this hijack is that it preserves $0DD5 from the level that led to the bonus room,
+; since both normal and secret exits can share the same bonus room destination.
 pipe_to_overworld:
-    ; get sublevel low byte
+    ; get sublevel lo byte
     ldx $95
     lda $5B
     and #$01
@@ -26,7 +30,7 @@ pipe_to_overworld:
     bne .original
 
     ; return to overworld
-    ; NOTE: $0DD5 already contains how the level was beaten (normal or secret)
+    ; NOTE: $0DD5 contains how the level was beaten (normal or secret)
     inc $1DE9 ; set activate event
     lda #$0B : sta $0100 ; change game mode to 0B (fade to black)
     bra .return
