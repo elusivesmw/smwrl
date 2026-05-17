@@ -14,19 +14,22 @@ if not(!infinite_lives)
 
 .game_over:
     ; If yes, go to game over
-    %jsl_to_rts_db($00D0DD,$0084CF)
+    %jsl_to_rts_db($00D0DD)
 
 ..return:
     rts
+endif ; not(!infinite_lives)
 
 .no_game_over:
-endif
-
     ; If the reload level flag is set...
     lda !ram_is_dying : bit #$40 : beq .no_reload
 
     ; Make sure Mario's animation timer is 0.
     stz $1496|!addr
+
+    ; If set the go to the Yoshi wings level, make it spawn Yoshi.
+    lda $1B95|!addr : beq .reload
+    lda #$01 : sta $0DC1|!addr
 
 .reload:
 if !title_death_behavior != 0
@@ -39,7 +42,7 @@ if !title_death_behavior != 0
     rts
 
 ..level:
-endif
+endif ; !title_death_behavior != 0
     ; ...reload the level!
     lda #$0F : sta $0100|!addr
     rts
@@ -47,7 +50,7 @@ endif
 .no_reload:
     ; Only update death counter and call the death routine once
     ; but handle the death song every frame to avoid issues with custom codes that call $00F606 every frame.
-    cmp #$00 : bne .handle_song
+    cmp #$00 : bne .every_frame
 
 .first_frame:
     ; Set the dying flag.
@@ -68,19 +71,8 @@ endif
 +   
     ; Call the custom death routine.
     php : phb
-    jsr extra_death
+    jsl extra_death
     plb : plp
-
-    ; Kill score sprites if the option is enabled and Retry prompt is enabled.
-if !no_score_sprites_on_death
-    jsr shared_get_prompt_type
-    cmp.b #!retry_type_enabled_max : bcs +
-
-    ldx.b #$06-1
--   stz $16E1|!addr,x
-    dex : bpl -
-+
-endif
 
     ; Reset some stuff related to lx5's Custom Powerups.
 if !custom_powerups == 1
@@ -94,7 +86,7 @@ if !custom_powerups == 1
 +   dex : bpl -
     
     lda !item_box_disable : ora #$02 : sta !item_box_disable
-endif
+endif ; !custom_powerups == 1
 
 if not(!infinite_lives)
     ; Don't decrement lives on the title screen.
@@ -108,9 +100,20 @@ if not(!infinite_lives)
     dec $0DBE|!addr : bmi .return
 
 .no_lose_lives:
-endif
+endif ; not(!infinite_lives)
 
-.handle_song:
+.every_frame:
+    ; Kill score sprites if the option is enabled and Retry prompt is enabled.
+if !no_score_sprites_on_death
+    jsr shared_get_prompt_type
+    cmp.b #!retry_type_enabled_max : bcs +
+
+    ldx.b #$06-1
+-   stz $16E1|!addr,x
+    dex : bpl -
++
+endif ; !no_score_sprites_on_death
+
     ; If the music is sped up, play the death song to make it normal again.
     lda !ram_hurry_up : bne .return
 
@@ -128,7 +131,7 @@ endif
 
     ; Undo the $0DDA change.
     ; This ensures the song won't be reloaded if it's the same after respawning.
-    lda !ram_music_backup : sta $0DDA|!addr
+    lda !ram_0dda_backup_current_frame : sta $0DDA|!addr
 
     ; Only play the death SFX once per death.
     lda !ram_is_dying : bmi .return
@@ -137,7 +140,7 @@ endif
     ; Play the death SFX.
 if !death_sfx != $00
     lda.b #!death_sfx : sta !death_sfx_addr|!addr
-endif
+endif ; !death_sfx != $00
 
 .return:
     rts
