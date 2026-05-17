@@ -18,6 +18,7 @@ overworld:
 ; Game mode resources
 gamemode:
 * retry_gm.asm
+14 rogue_gm14.asm
 
 ; Other code files and free RAM setting.  These don't usually need to be changed.
 global:         other/global_code.asm

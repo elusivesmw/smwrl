@@ -1,6 +1,3 @@
-!freeram            = $7FA300
-!trigger_bonus_game = !freeram+3
-
 init:
     ; set bonus game flag if level hasn't been beaten yet
     lda $13BF : tax ; get translevel number as index

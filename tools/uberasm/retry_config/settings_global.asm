@@ -11,11 +11,11 @@
 ;=========================== QoL and Anti-Break ================================
 
 ; How many lives to start a new save file with.
-    !initial_lives = 99
+    !initial_lives = 3
 
 ; If 1, lives won't decrement when dying.
 ; Note: if 0, you can choose to have infinite lives in specific sublevels (see "settings_local.asm").
-    !infinite_lives = 1
+    !infinite_lives = 0
 
 ; 0 = midways won't give Mario a mushroom.
 ; 1 = vanilla midway powerup behavior.
@@ -25,9 +25,9 @@
 ; Useful for Kaizo and collab hacks. For lives, they will be reset to !initial_lives.
 ; 0 = disabled, 1 = enabled for both respawning and going to the Overworld
 ; 2 = enabled just for respawning, 3 = enabled just for going to the Overworld
-    !counterbreak_yoshi       = 1
-    !counterbreak_powerup     = 1
-    !counterbreak_item_box    = 1
+    !counterbreak_yoshi       = 0
+    !counterbreak_powerup     = 0
+    !counterbreak_item_box    = 0
     !counterbreak_coins       = 0
     !counterbreak_bonus_stars = 0
     !counterbreak_score       = 0
@@ -301,14 +301,14 @@
 ; If 1, a sprite status bar will be installed allowing you to display the item box, coins, Yoshi coins,
 ; timer, lives and bonus stars using sprite tiles, which keeps layer 3 working properly.
 ; If !sprite_status_bar = 0, you can ignore the other sprite status bar settings.
-    !sprite_status_bar = 0
+    !sprite_status_bar = 1
 
 ; If 1, it disables the original game's status bar (including the IRQ) which prevents layer 3 from messing up.
 ; Differently than the normal remove status bar patch, this keeps the status bar functions (lives, coins,
 ; bonus stars, score, timer, reserve item) running in the background.
 ; Suggested to use if you're using !sprite_status_bar = 1.
 ; Don't use this if you're using similar patches such as "RAM Toggled Status Bar".
-    !remove_vanilla_status_bar = 0
+    !remove_vanilla_status_bar = 1
 
 ; Default sprite tile and palette to use for each element in the status bar.
 ; These settings can be overridden per-level by using the %ssb_config commands in "settings_local.asm".
@@ -396,7 +396,7 @@
 
 ; If 1, the item box will always be drawn (if set to be drawn for the specific level).
 ; Otherwise, it will only be drawn when having an item in reserve.
-    !always_draw_box = 1
+    !always_draw_box = 0
 
 ; If 1, the item box will use an 8x8 tile instead of a 16x16 tile.
     !8x8_item_box_tile = 0
