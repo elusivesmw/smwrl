@@ -17,15 +17,15 @@
 ;  4 = no prompt + play the death jingle. Recommended if you want the music to restart on each death.
 ;  5 = no retry (as if "no" is chosen automatically). Use this to have a vanilla death sequence.
 ;
-; The second digit sets the behavior of midways bars and level entrances in the sublevel (see the figures in the "midway instruction" folder):
+; The second digit sets the behavior of midways bars and level entrances in the sublevel:
 ;  0 = Vanilla. The midway bar in the corresponding sublevel will lead to the midway entrance of the main level.
 ;  1 = The Midway bar in the corresponding sublevel will lead to the midway entrance of this sublevel as a checkpoint.
-;  2 = Any main/secondary/midway entrance through door/pipe/etc. whose destination is the corresponding sublevel will
-;        trigger a checkpoint like midway bars, and the checkpoint will lead to this entrance.
+;  2 = Any main/secondary/midway entrance into the corresponding sublevel will trigger a checkpoint like midway bars, and the checkpoint will lead to this entrance.
 ;  3 = This option enables both the effects of 1 (midway bar) and 2 (level entrances).
-;
-; NOTE: The custom midway objects could do almost everything that you may want without using this.
-;       However this may be easier to use for some people, and it's what original retry also uses.
+;  4 = Any main/midway entrance into the corresponding sublevel will trigger a checkpoint like midway bars, and the checkpoint will lead to this entrance.
+;  5 = This option enables both the effects of 1 (midway bar) and 4 (main/midway entrances).
+;  6 = Any secondary entrance into the corresponding sublevel will trigger a checkpoint like midway bars, and the checkpoint will lead to this entrance.
+;  7 = This option enables both the effects of 1 (midway bar) and 6 (secondary entrances).
 ;
 ; For example, having $32 as the value for level 105 will set the value 3 for the Retry prompt
 ; (no prompt + play only the sfx) and 2 for the checkpoint (any entrance to the level will set a checkpoint).
@@ -117,47 +117,48 @@ sfx_echo:
 ;=================;
 ; Reset RNG table ;
 ;=================;
-; With this table you can control in which sublevels the RNG seeds will be reset when dying.
-; 1 = reset RNG, 0 = don't reset RNG.
-; By default this applies to all levels, to have consistent setups after death,
-; but you can disable it when preferred.
+; With this table you can control the RNG reset behavior for every sublevel.
+; $00 = never reset RNG in this sublevel (max randomness)
+; $01 = reset RNG when entering this sublevel from the Overworld (vanilla behavior)
+; $02 = $01 + reset RNG when dying and Retrying in this sublevel (old Retry default behavior)
+; $03 = $02 + reset RNG when entering this sublevel from a door/pipe (always reset it)
 ;
-; Format is the same as the sfx_echo table: each digit corresponds to one sublevel.
+; Format is the same as the checkpoint_effect table: each number corresponds to one sublevel.
 
 reset_rng:
-;       01234567  89ABCDEF
-    db %11111111,%11111111 ; 000-00F
-    db %11111111,%11111111 ; 010-01F
-    db %11111111,%11111111 ; 020-02F
-    db %11111111,%11111111 ; 030-03F
-    db %11111111,%11111111 ; 040-04F
-    db %11111111,%11111111 ; 050-05F
-    db %11111111,%11111111 ; 060-06F
-    db %11111111,%11111111 ; 070-07F
-    db %11111111,%11111111 ; 080-08F
-    db %11111111,%11111111 ; 090-09F
-    db %11111111,%11111111 ; 0A0-0AF
-    db %11111111,%11111111 ; 0B0-0BF
-    db %11111111,%11111111 ; 0C0-0CF
-    db %11111111,%11111111 ; 0D0-0DF
-    db %11111111,%11111111 ; 0E0-0EF
-    db %11111111,%11111111 ; 0F0-0FF
-    db %11111111,%11111111 ; 100-10F
-    db %11111111,%11111111 ; 110-11F
-    db %11111111,%11111111 ; 120-12F
-    db %11111111,%11111111 ; 130-13F
-    db %11111111,%11111111 ; 140-14F
-    db %11111111,%11111111 ; 150-15F
-    db %11111111,%11111111 ; 160-16F
-    db %11111111,%11111111 ; 170-17F
-    db %11111111,%11111111 ; 180-18F
-    db %11111111,%11111111 ; 190-19F
-    db %11111111,%11111111 ; 1A0-1AF
-    db %11111111,%11111111 ; 1B0-1BF
-    db %11111111,%11111111 ; 1C0-1CF
-    db %11111111,%11111111 ; 1D0-1DF
-    db %11111111,%11111111 ; 1E0-1EF
-    db %11111111,%11111111 ; 1F0-1FF
+;       0   1   2   3   4   5   6   7   8   9   A   B   C   D   E   F
+    db $02,$02,$02,$02,$02,$02,$02,$02,$02,$02,$02,$02,$02,$02,$02,$02 ; 000-00F
+    db $02,$02,$02,$02,$02,$02,$02,$02,$02,$02,$02,$02,$02,$02,$02,$02 ; 010-01F
+    db $02,$02,$02,$02,$02,$02,$02,$02,$02,$02,$02,$02,$02,$02,$02,$02 ; 020-02F
+    db $02,$02,$02,$02,$02,$02,$02,$02,$02,$02,$02,$02,$02,$02,$02,$02 ; 030-03F
+    db $02,$02,$02,$02,$02,$02,$02,$02,$02,$02,$02,$02,$02,$02,$02,$02 ; 040-04F
+    db $02,$02,$02,$02,$02,$02,$02,$02,$02,$02,$02,$02,$02,$02,$02,$02 ; 050-05F
+    db $02,$02,$02,$02,$02,$02,$02,$02,$02,$02,$02,$02,$02,$02,$02,$02 ; 060-06F
+    db $02,$02,$02,$02,$02,$02,$02,$02,$02,$02,$02,$02,$02,$02,$02,$02 ; 070-07F
+    db $02,$02,$02,$02,$02,$02,$02,$02,$02,$02,$02,$02,$02,$02,$02,$02 ; 080-08F
+    db $02,$02,$02,$02,$02,$02,$02,$02,$02,$02,$02,$02,$02,$02,$02,$02 ; 090-09F
+    db $02,$02,$02,$02,$02,$02,$02,$02,$02,$02,$02,$02,$02,$02,$02,$02 ; 0A0-0AF
+    db $02,$02,$02,$02,$02,$02,$02,$02,$02,$02,$02,$02,$02,$02,$02,$02 ; 0B0-0BF
+    db $02,$02,$02,$02,$02,$02,$02,$02,$02,$02,$02,$02,$02,$02,$02,$02 ; 0C0-0CF
+    db $02,$02,$02,$02,$02,$02,$02,$02,$02,$02,$02,$02,$02,$02,$02,$02 ; 0D0-0DF
+    db $02,$02,$02,$02,$02,$02,$02,$02,$02,$02,$02,$02,$02,$02,$02,$02 ; 0E0-0EF
+    db $02,$02,$02,$02,$02,$02,$02,$02,$02,$02,$02,$02,$02,$02,$02,$02 ; 0F0-0FF
+    db $02,$02,$02,$02,$02,$02,$02,$02,$02,$02,$02,$02,$02,$02,$02,$02 ; 100-10F
+    db $02,$02,$02,$02,$02,$02,$02,$02,$02,$02,$02,$02,$02,$02,$02,$02 ; 110-11F
+    db $02,$02,$02,$02,$02,$02,$02,$02,$02,$02,$02,$02,$02,$02,$02,$02 ; 120-12F
+    db $02,$02,$02,$02,$02,$02,$02,$02,$02,$02,$02,$02,$02,$02,$02,$02 ; 130-13F
+    db $02,$02,$02,$02,$02,$02,$02,$02,$02,$02,$02,$02,$02,$02,$02,$02 ; 140-14F
+    db $02,$02,$02,$02,$02,$02,$02,$02,$02,$02,$02,$02,$02,$02,$02,$02 ; 150-15F
+    db $02,$02,$02,$02,$02,$02,$02,$02,$02,$02,$02,$02,$02,$02,$02,$02 ; 160-16F
+    db $02,$02,$02,$02,$02,$02,$02,$02,$02,$02,$02,$02,$02,$02,$02,$02 ; 170-17F
+    db $02,$02,$02,$02,$02,$02,$02,$02,$02,$02,$02,$02,$02,$02,$02,$02 ; 180-18F
+    db $02,$02,$02,$02,$02,$02,$02,$02,$02,$02,$02,$02,$02,$02,$02,$02 ; 190-19F
+    db $02,$02,$02,$02,$02,$02,$02,$02,$02,$02,$02,$02,$02,$02,$02,$02 ; 1A0-1AF
+    db $02,$02,$02,$02,$02,$02,$02,$02,$02,$02,$02,$02,$02,$02,$02,$02 ; 1B0-1BF
+    db $02,$02,$02,$02,$02,$02,$02,$02,$02,$02,$02,$02,$02,$02,$02,$02 ; 1C0-1CF
+    db $02,$02,$02,$02,$02,$02,$02,$02,$02,$02,$02,$02,$02,$02,$02,$02 ; 1D0-1DF
+    db $02,$02,$02,$02,$02,$02,$02,$02,$02,$02,$02,$02,$02,$02,$02,$02 ; 1E0-1EF
+    db $02,$02,$02,$02,$02,$02,$02,$02,$02,$02,$02,$02,$02,$02,$02,$02 ; 1F0-1FF
 
 ;===================================;
 ; Disable Room Checkpoint SFX table ;

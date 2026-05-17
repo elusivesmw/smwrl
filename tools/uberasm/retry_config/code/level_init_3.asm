@@ -7,7 +7,7 @@ if !pipe_entrance_freeze < 2
     cmp #$07 : bcs +
     lda.b #!pipe_entrance_freeze : sta $9D
 +
-endif
+endif ; !pipe_entrance_freeze < 2
 
     ; If goal walk is in progress, reset the music to play.
     ; This ensures the song will be reloaded if dying and respawning in the same sublevel.
@@ -16,10 +16,10 @@ endif
 +   
     ; Play the silent checkpoint SFX if applicable.
 if !room_cp_sfx != $00
-    lda !ram_play_sfx : beq +
+    lda !ram_misc_flags : and.b #!misc_flags_no_room_cp_sfx : beq +
     lda.b #!room_cp_sfx : sta !room_cp_sfx_addr|!addr
 +
-endif
+endif ; !room_cp_sfx != $00
 
     ; If AMK is inserted, send the disable/enable SFX echo command
     ; depending on the current sublevel's sfx_echo setting.
@@ -29,13 +29,13 @@ endif
     jsr shared_get_bitwise_mask
     and.l tables_sfx_echo,x : beq ++
     iny
-    lda !ram_play_sfx : ora #$80 : sta !ram_play_sfx
+    lda !ram_misc_flags : ora.b #!misc_flags_sfx_echo : sta !ram_misc_flags
 ++  sty $1DFA|!addr
 +
     ; Reset DSX sprites.
 if !reset_dsx
     stz $06FE|!addr
-endif
+endif ; !reset_dsx
 
     ; Reset vanilla Boo rings.
 if !reset_boo_rings == 2
@@ -43,7 +43,7 @@ if !reset_boo_rings == 2
     stz $0FAE|!addr
     stz $0FB0|!addr
     sep #$20
-endif
+endif ; !reset_boo_rings == 2
 
     ; Reset timer frame counter
     lda.l !rom_timer_ticks : sta $0F30|!addr
@@ -56,14 +56,17 @@ endif
     lda $0F31|!addr : sta !ram_timer+0
     sep #$20
     lda $0F33|!addr : sta !ram_timer+2
+    bra .ow_entrance_or_respawning_or_transition_midway
 
 .room_transition:
-    ; Check if we're respawning or in a transition checkpoint.
-    lda !ram_is_respawning : bne ..respawning
-    jsr shared_get_checkpoint_value
-    cmp #$02 : bcc .normal
+    ; If we're respawning, reset some stuff.
+    lda !ram_is_respawning : bne .ow_entrance_or_respawning_or_transition_midway
 
-..respawning:
+    ; If this just transition just triggered a room checkpoint, reset some stuff.
+    lda !ram_respawn+1
+    jsr shared_is_destination_a_checkpoint : bcc .normal
+
+.ow_entrance_or_respawning_or_transition_midway:
     ; Fix issues with the "level ender" sprite.
     stz $1493|!addr
     stz $13C6|!addr
@@ -87,12 +90,12 @@ if !sprite_status_bar
     ; Initialize and draw the status bar during the fadein
     jsr sprite_status_bar_init
     jsr sprite_status_bar_main
-endif
+endif ; !sprite_status_bar
 
 main:
 if !fast_transitions
     ; Reset the mosaic timer.
     stz $0DB1|!addr
-endif
+endif ; !fast_transitions
 
     rtl

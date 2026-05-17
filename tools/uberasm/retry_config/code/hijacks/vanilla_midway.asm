@@ -27,37 +27,37 @@ midway_main:
     sep #$20
     
     ; If there's no custom midways in this sublevel, skip.
-    lda !ram_cust_obj_num : dec : bmi .not_custom
+    lda !ram_cust_obj_num : beq .not_custom
 
     ; Loop through all custom midways IDs to see if this one is custom.
-    asl : tax
-    rep #$20
+    ; (avoid doing DEC by loading addr-2,x later)
+    rep #$30
+    and #$00FF : asl : tax
+    lda $04
 .find_custom_midway_loop:
-    lda !ram_cust_obj_data,x : cmp $04 : bne ..next
-    jmp .custom
-..next:
-    dex #2 : bpl .find_custom_midway_loop
-    sep #$20
+    cmp !ram_cust_obj_data-2,x : beq .custom
+    dex #2 : bne .find_custom_midway_loop
 
 .not_custom:
+    sep #$30
     ; Signal that we have to set a normal midway.
     lda #$00 : sta !ram_set_checkpoint
     bra .return
 
 .custom:
     ; Set the respawn entrance value.
-    lda !ram_cust_obj_entr,x : sta !ram_set_checkpoint
+    lda !ram_cust_obj_entr-2,x : sta !ram_set_checkpoint
 
 .return:
     ; Restore $04.
     rep #$20
     pla : sta $04
-    sep #$20
+    sep #$30
 
     ; Call the custom midway routine.
     ; (we already did PHX earlier).
-    phy : php : phb : phk : plb
-    jsr extra_midway
+    phy : php : phb
+    jsl extra_midway
     plb : plp : ply : plx
     
     ; Only run the powerup code if applicable.
@@ -140,7 +140,7 @@ if !sa1 == 0
     lda $05 : sta $4203
     rep #$20
     lda $01 : clc : adc $4216 : sta $01
-else
+else ; if !sa1
     stz $2250
 
     rep #$20
@@ -153,7 +153,7 @@ else
     txa : and #$00FF : sta $2251
     lda $05 : and #$00FF : sta $2253
     lda $01 : clc : adc $2306 : sta $01
-endif
+endif ; !sa1 == 0
 
     lda $00 : sta $04
     pla : sta $02
@@ -183,7 +183,7 @@ midway_spawn:
 .checkpoint:
     ; Check if the checkpoint is for the main or sublevel.
     jsr shared_get_checkpoint_value
-    cmp #$01 : bcs ..sublevel
+    and.b #!checkpoint_type_midway_bar : bne ..sublevel
 
 ..main:
     %lda_13BF() : bne ...no_intro

@@ -1,0 +1,50 @@
+; Static defines for miscellaneous values used by Retry
+; These are defined statically
+
+!retry_type_follow_global      #= $00
+!retry_type_prompt_death_song  #= $01
+!retry_type_prompt_death_sfx   #= $02
+!retry_type_prompt_max         #= !retry_type_prompt_death_sfx
+!retry_type_instant_death_sfx  #= $03
+!retry_type_instant_death_song #= $04
+!retry_type_instant_max        #= !retry_type_instant_death_song
+!retry_type_enabled_max        #= !retry_type_instant_max
+!retry_type_vanilla            #= $05
+!retry_type_min                #= !retry_type_follow_global
+!retry_type_max                #= !retry_type_vanilla
+
+!checkpoint_type_vanilla                         #= $00
+!checkpoint_type_midway_bar                      #= $01
+!checkpoint_type_all_entrance                    #= $02
+!checkpoint_type_midway_bar_all_entrance         #= $03
+!checkpoint_type_main_midway_entrance            #= $04
+!checkpoint_type_midway_bar_main_midway_entrance #= $05
+!checkpoint_type_secondary_entrance              #= $06
+!checkpoint_type_midway_bar_secondary_entrance   #= $07
+!checkpoint_type_min                             #= !checkpoint_type_vanilla
+!checkpoint_type_max                             #= !checkpoint_type_midway_bar_secondary_entrance
+
+!reset_rng_type_never    #= $00
+!reset_rng_type_ow       #= $01
+!reset_rng_type_ow_retry #= $02
+!reset_rng_type_always   #= $03
+!reset_rng_type_min      #= !reset_rng_type_never
+!reset_rng_type_max      #= !reset_rng_type_always
+
+!ssb_elements_number #= 6
+
+!canary_value #= 42069
+
+!box_window_x_pos #= $38
+
+!box_window_size #= 72
+
+; AMK header stuff in the ROM
+!amk_header_string     #= $4B4D4140 ; @AMK
+!amk_header_size       #= 32
+!amk_music_ptrs_offset #= 8
+
+; Flags used for !ram_misc_flags
+!misc_flags_sfx_echo         = $80
+!misc_flags_no_sample_reload = $40
+!misc_flags_no_room_cp_sfx   = $01
