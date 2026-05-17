@@ -10,6 +10,7 @@ tools/asar/*
 ## except uberasm/retry
 !tools/uberasm/
 tools/uberasm/*
+!tools/uberasm/list.txt
 !tools/uberasm/gamemode/
 !tools/uberasm/gamemode/*
 !tools/uberasm/level/
@@ -24,6 +25,7 @@ tools/uberasm/*
 ## except blocks
 !tools/gps/
 tools/gps/*
+!tools/gps/list.txt
 !tools/gps/blocks/
 !tools/gps/blocks/*
 tools/gps/blocks/template.asm
@@ -31,6 +33,7 @@ tools/gps/blocks/template.asm
 ## except sprites
 !tools/pixi/
 tools/pixi/*
+!tools/pixi/list.txt
 !tools/pixi/sprites/
 !tools/pixi/sprites/*
 tools/pixi/sprites/_header.asm
