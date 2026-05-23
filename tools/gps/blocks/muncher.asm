@@ -1,8 +1,6 @@
-; Original code: HammerBrother
-; Original filename: VanillaMuncher.asm
 ; https://www.smwcentral.net/?p=section&a=details&id=41222
 
-; customized by: elusive
+; customization:
 ; added perk conditons (for now just hiking boots)
 
 ; import rogue defines

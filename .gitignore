@@ -29,6 +29,11 @@ tools/gps/*
 !tools/gps/blocks/
 !tools/gps/blocks/*
 tools/gps/blocks/template.asm
+# and custom routines
+!tools/gps/routines
+tools/gps/routines/*
+!tools/gps/routines/side_contact_check.asm
+!tools/gps/routines/check_sprite_kicked_horiz_alt.asm
 
 ## except sprites
 !tools/pixi/
