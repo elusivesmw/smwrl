@@ -61,46 +61,13 @@ endif
     ; and store
     sta.l !perk_index
 
-    ; TODO: change this to a pointer table
-    cmp #$00 : bne +
-    jsr jump_ability
-    jmp .cleanup
-+
-    cmp #$01 : bne +
-    jsr normal_jump
-    jmp .cleanup
-+
-    cmp #$02 : bne +
-    jsr spin_jump
-    jmp .cleanup
-+
-    cmp #$03 : bne +
-    jsr boost_jump
-    jmp .cleanup
-+
-    cmp #$04 : bne +
-    jsr enable_p_speed
-    jmp .cleanup
-+
-    cmp #$05 : bne +
-    jsr enable_carry
-    jmp .cleanup
-+
-    cmp #$06 : bne +
-    jsr one_up
-    jmp .cleanup
-+
-    cmp #$07 : bne +
-    jsr three_up
-    jmp .cleanup
-+
-    cmp #$08 : bne +
-    jsr hiking_boots
-    jmp .cleanup
-+
-    cmp #$fe : bne .return
-    jsr placeholder
-    ;jmp .cleanup
+    ; ensure perk index within range
+    cmp #!perk_count : bcs .cleanup
+
+    ; execute perk pointer
+    phx : tax
+    jsr (perk_table,x)
+    plx
 
     .cleanup:
     jsr cleanup
@@ -254,6 +221,18 @@ perk_index:
     lda $160E,x
     .return
 rts
+
+; perk pointer table
+perk_table:
+    dw jump_ability     ; 00
+    dw normal_jump      ; 01
+    dw spin_jump        ; 02
+    dw boost_jump       ; 03
+    dw enable_p_speed   ; 04
+    dw enable_carry     ; 05
+    dw one_up           ; 06
+    dw three_up         ; 07
+    dw hiking_boots     ; 08
 
 ; ---- perks ----
 jump_ability:
