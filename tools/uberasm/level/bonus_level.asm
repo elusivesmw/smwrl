@@ -72,7 +72,9 @@ endmacro
 %stripe_message(msg_07, 14, !top_row, "3up", 2)
 %stripe_message(msg_08, 5, !top_row, "hiking boots obtained", 2)
 %stripe_message(msg_09, 7, !top_row, "mushrooms can now", 2)
-%stripe_message(msg_0A, 7, !top_row+1, "appear in ? blocks", 2)
+%stripe_message(msg_0A, 8, !top_row, "flowers can now", 2)
+%stripe_message(msg_0B, 8, !top_row, "feathers can now", 2)
+%stripe_message(msg_0C, 7, !top_row+1, "appear in ? blocks", 2)
 print "message_count ", "!message_count"
 
 macro table_entry(label)
@@ -97,6 +99,8 @@ stripe_table:
     %table_entry(msg_08)
     %table_entry(msg_09)
     %table_entry(msg_0A)
+    %table_entry(msg_0B)
+    %table_entry(msg_0C)
 
 print "perk_msgs written at PC: ", pc
 perk_msgs:
@@ -110,6 +114,8 @@ perk_msgs:
     dw perk_07_msgs
     dw perk_08_msgs
     dw perk_09_msgs
+    dw perk_0A_msgs
+    dw perk_0B_msgs
 
 perk_00_msgs:
     lda #$00
@@ -178,7 +184,21 @@ rts
 perk_09_msgs:
     lda #$09
     jsr write_msg
+    lda #$0C
+    jsr write_msg
+rts
+
+perk_0A_msgs:
     lda #$0A
+    jsr write_msg
+    lda #$0C
+    jsr write_msg
+rts
+
+perk_0B_msgs:
+    lda #$0B
+    jsr write_msg
+    lda #$0C
     jsr write_msg
 rts
 

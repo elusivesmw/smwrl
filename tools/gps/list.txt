@@ -23,5 +23,7 @@
 31E:0025    exit_bonus_door.asm
 32E:0025    exit_bonus_door.asm
 
-; WIP: custom power up conditions
+; custom power up conditions
 330:0130    question_block_rogue_mushroom.asm
+331:0130    question_block_rogue_flower.asm
+332:0130    question_block_rogue_feather.asm

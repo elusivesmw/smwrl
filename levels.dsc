@@ -11,3 +11,5 @@
 325	0	Acts as 130 if a specific switch isn't active.
 32e	0	A door that exits the bonus game.
 330	0	Rogue: Mushroom/Coin
+331	0	Rogue: Flower/Coin
+332	0	Rogue: Feather/Coin

@@ -24,6 +24,8 @@ perk_table:
     dw three_up         ; 07
     dw hiking_boots     ; 08
     dw unlock_mushroom  ; 09
+    dw unlock_flower    ; 0A
+    dw unlock_feather   ; 0B
 perk_table_end:
 !perk_count = (perk_table_end-perk_table)/2
 print "perk count: ", dec(!perk_count)
@@ -137,10 +139,10 @@ y_offset:
     db 0,0,0,-1,-2,-3,-2,-1
 tile_map:
     db $80,$82,$84,$86,$42,$88,$24,$8A
-    db $A0,$24
+    db $A0,$24,$26,$0E
 props:
     db prop($0C,1),prop($0C,1),prop($0C,1),prop($0C,1),prop($0B,0),prop($08,1),prop($0D,0),prop($0A,1)
-    db prop($08,1),prop($0C,0)
+    db prop($08,1),prop($0C,0),prop($0D,0),prop($0A,0)
 
 sparkle:
     ; how often to spawn a sparkle
@@ -311,8 +313,23 @@ rts
 
 unlock_mushroom:
     ; set mushroom unlocked
-    lda #$01
-    sta !unlock_mushroom
+    lda !powerup_flags
+    ora #$01
+    sta !powerup_flags
+rts
+
+unlock_flower:
+    ; set flower unlocked
+    lda !powerup_flags
+    ora #$02
+    sta !powerup_flags
+rts
+
+unlock_feather:
+    ; set feather unlocked
+    lda !powerup_flags
+    ora #$04
+    sta !powerup_flags
 rts
 ; ---- end perks ----
 

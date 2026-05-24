@@ -31,7 +31,7 @@ incsrc question_block_base.asm
 
 
 ; Spawn specific defines
-!Sprite     = $74           ; sprite number
+!Sprite     = $75           ; sprite number
 !IsCustom   = CLC           ; CLC for normal, SEC custom sprite
 !State      = $08           ; $08 for normal, $09 for carryable sprites
 !1540_val   = $3E           ; If you use powerups, this should be $3E
@@ -50,9 +50,9 @@ incsrc question_block_base.asm
 
 ; Code stuff
 SpawnThing:
-    lda.l !powerup_flags ; check if mushroom is unlocked
+    lda.l !powerup_flags ; check if flower is unlocked
     and #$01
-    bne SpawnMushroom
+    bne SpawnFlower
 
 SpawnCoin:
     LDX #$03
@@ -99,7 +99,7 @@ endif
     .Return:
 RTS
 
-SpawnMushroom:
+SpawnFlower:
     LDA #!Sprite
     !IsCustom
 
@@ -146,4 +146,4 @@ SpawnMushroom:
     .Return:
 RTS 
 
-print "Rogue: Mushroom/Coin"
+print "Rogue: Flower/Coin"
