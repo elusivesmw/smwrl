@@ -4,13 +4,29 @@ incsrc "../../uberasm/rogue/ram.asm"
 ; config
 !this_sprite_num = $AF
 !sparkle        = 1 ; should perk sparkle?
-!perk_count     = 9 ; perks max index + 1
 !inc_amount     = 2 ; how much to increase jump height by
 !jump_max_inc   = 32 ; normal/spin increment max
 !boost_max_inc  = 24 ; boost increment max
 
-; convert palette number into CCC format
-function pal(val) = (val-8)*2
+; convert palette number and tile number hi byte into CCC format
+function prop(pal,tile_hi) = ((pal-8)*2)|tile_hi
+;print "prop: ", hex(prop($0C,1))
+
+; perk pointer table
+perk_table:
+    dw jump_ability     ; 00
+    dw normal_jump      ; 01
+    dw spin_jump        ; 02
+    dw boost_jump       ; 03
+    dw enable_p_speed   ; 04
+    dw enable_carry     ; 05
+    dw one_up           ; 06
+    dw three_up         ; 07
+    dw hiking_boots     ; 08
+    dw unlock_mushroom  ; 09
+perk_table_end:
+!perk_count = (perk_table_end-perk_table)/2
+print "perk count: ", dec(!perk_count)
 
 print "INIT ",pc
     jsr init
@@ -57,15 +73,15 @@ endif
     bcc .return
 
     ; get perk type
-    jsr perk_index
+    jsr perk_num
     ; and store
-    sta.l !perk_index
+    sta.l !perk_num
 
-    ; ensure perk index within range
-    cmp #!perk_count : bcs .cleanup
+    ; ensure perk number within range
+    cmp.b #!perk_count : bcs .cleanup
 
     ; execute perk pointer
-    phx : tax
+    phx : asl : tax ; *2 (word table)
     jsr (perk_table,x)
     plx
 
@@ -97,16 +113,17 @@ graphics:
     clc : adc #$10
     ; tile numbers
     phx
-    jsr perk_index : tax  ; get perk index in x 
+    jsr perk_num : tax  ; get perk number in x
+    ; tilemap, palette, tile number hi byte determined by perk number
     lda tile_map,x
     sta $0302,y
-    lda palette,x
-    sta $0F ; store palette in scratch
+    lda props,x
+    sta $0F ; store palette and tile number hi byte in scratch
     plx
     ; properties
     lda $15F6,x
     ora $64
-    and #%11110001 ; clear palette
+    and #%11110000 ; clear palette and tile number hi byte
     ora $0F ; set palette from scratch
     sta $0303,y
     
@@ -116,14 +133,14 @@ graphics:
     jsl $01B7B3
 rts
 
-palette:
-    db pal($0C),pal($0C),pal($0C),pal($0C),pal($0B),pal($08),pal($0D),pal($0A)
-    db pal($08)
 y_offset:
     db 0,0,0,-1,-2,-3,-2,-1
 tile_map:
     db $80,$82,$84,$86,$88,$8A,$8C,$8E
-    db $A0
+    db $A0,$24
+props:
+    db prop($0C,1),prop($0C,1),prop($0C,1),prop($0C,1),prop($0B,1),prop($08,1),prop($0D,1),prop($0A,1)
+    db prop($08,1),prop($0C,0)
 
 sparkle:
     ; how often to spawn a sparkle
@@ -156,7 +173,7 @@ sparkle:
     sbc $1B
     bne .return
 
-    ;random Y offset in the range #$00FE-#$010D
+    ; random Y offset in the range #$00FE-#$010D
     lda $148E
     and #$0F
     clc
@@ -174,7 +191,7 @@ rts
 
 ; find an empty minor extended sprite slot
 find_slot:
-    LDY #$0B
+    ldy #$0B
 -
     lda $17F0,Y
     beq draw_sparkle
@@ -196,7 +213,7 @@ draw_sparkle:
 rts
 
 ; determine random perk
-; return perk index in A
+; return perk number in A
 init_random_perk:
     ; TODO: figure out how to use RNG
     ;jsl $01ACF9
@@ -207,13 +224,13 @@ init_random_perk:
     stx $00
     eor $00 ; eor with X so all aren't the same
 -
-    sec : sbc #!perk_count
-    cmp #!perk_count : bcs - 
+    sec : sbc.b #!perk_count
+    cmp.b #!perk_count : bcs -
     .return:
 rts
 
-; return effective perk index in A
-perk_index:
+; return effective perk number in A
+perk_num:
     ; check extra byte 1 for perk type 
     lda !extra_byte_1,x
     ; if random, load effective perk
@@ -221,18 +238,6 @@ perk_index:
     lda $160E,x
     .return
 rts
-
-; perk pointer table
-perk_table:
-    dw jump_ability     ; 00
-    dw normal_jump      ; 01
-    dw spin_jump        ; 02
-    dw boost_jump       ; 03
-    dw enable_p_speed   ; 04
-    dw enable_carry     ; 05
-    dw one_up           ; 06
-    dw three_up         ; 07
-    dw hiking_boots     ; 08
 
 ; ---- perks ----
 jump_ability:
@@ -304,9 +309,10 @@ hiking_boots:
     sta !muncher_inv
 rts
 
-placeholder:
-    ; next powerup
-    .return:
+unlock_mushroom:
+    ; set mushroom unlocked
+    lda #$01
+    sta !unlock_mushroom
 rts
 ; ---- end perks ----
 

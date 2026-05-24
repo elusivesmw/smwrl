@@ -61,15 +61,18 @@ macro stripe_message(label,x,y,message,palette)
     .end:
 endmacro
 
-%stripe_message(msg0, 7, 40, "all jumps unlocked", 3)
-%stripe_message(msg1, 2, 40, "normal jump height increased", 2)
-%stripe_message(msg2, 3, 40, "spin jump height increased", 2)
-%stripe_message(msg3, 3, 40, "boost jump height increased", 3)
-%stripe_message(msg4, 6, 40, "p-speed now enabled", 2)
-%stripe_message(msg5, 3, 40, "carrying items now enabled", 2)
-%stripe_message(msg6, 14, 40, "1up", 2)
-%stripe_message(msg7, 14, 40, "3up", 2)
-%stripe_message(msg8, 5, 40, "hiking boots obtained", 2)
+!top_row = 40
+%stripe_message(msg_00, 7, !top_row, "all jumps unlocked", 3)
+%stripe_message(msg_01, 2, !top_row, "normal jump height increased", 2)
+%stripe_message(msg_02, 3, !top_row, "spin jump height increased", 2)
+%stripe_message(msg_03, 3, !top_row, "boost jump height increased", 3)
+%stripe_message(msg_04, 6, !top_row, "p-speed now enabled", 2)
+%stripe_message(msg_05, 3, !top_row, "carrying items now enabled", 2)
+%stripe_message(msg_06, 14, !top_row, "1up", 2)
+%stripe_message(msg_07, 14, !top_row, "3up", 2)
+%stripe_message(msg_08, 5, !top_row, "hiking boots obtained", 2)
+%stripe_message(msg_09, 7, !top_row, "mushrooms can now", 2)
+%stripe_message(msg_0A, 7, !top_row+1, "appear in ? blocks", 2)
 print "message_count ", "!message_count"
 
 macro table_entry(label)
@@ -83,15 +86,17 @@ endmacro
 
 print "stripe_table written at PC: ", pc
 stripe_table:
-    %table_entry(msg0)
-    %table_entry(msg1)
-    %table_entry(msg2)
-    %table_entry(msg3)
-    %table_entry(msg4)
-    %table_entry(msg5)
-    %table_entry(msg6)
-    %table_entry(msg7)
-    %table_entry(msg8)
+    %table_entry(msg_00)
+    %table_entry(msg_01)
+    %table_entry(msg_02)
+    %table_entry(msg_03)
+    %table_entry(msg_04)
+    %table_entry(msg_05)
+    %table_entry(msg_06)
+    %table_entry(msg_07)
+    %table_entry(msg_08)
+    %table_entry(msg_09)
+    %table_entry(msg_0A)
 
 print "perk_msgs written at PC: ", pc
 perk_msgs:
@@ -104,6 +109,7 @@ perk_msgs:
     dw perk_06_msgs
     dw perk_07_msgs
     dw perk_08_msgs
+    dw perk_09_msgs
 
 perk_00_msgs:
     lda #$00
@@ -169,15 +175,22 @@ perk_08_msgs:
     jsr write_msg
 rts
 
+perk_09_msgs:
+    lda #$09
+    jsr write_msg
+    lda #$0A
+    jsr write_msg
+rts
+
 init:
-    ; clear previously selected perk index
+    ; clear previously selected perk number
     lda #$FF
-    sta !perk_index
+    sta !perk_num
 rtl
 
 
 main:
-    lda.l !perk_index
+    lda.l !perk_num
 
     ; ensure index within bounds
     cmp.b #!message_count

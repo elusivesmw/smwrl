@@ -50,7 +50,7 @@ incsrc question_block_base.asm
 
 ; Code stuff
 SpawnThing:
-    lda $7fa210             ; check if mushrooms are unlocked (TODO: actually build this perk, and use the correct define)
+    lda.l !unlock_mushroom  ; check if mushrooms are unlocked (TODO: actually build this perk, and use the correct define)
     bne SpawnMushroom
 
 SpawnCoin:
