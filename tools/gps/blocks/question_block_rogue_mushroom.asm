@@ -50,8 +50,8 @@ incsrc question_block_base.asm
 
 ; Code stuff
 SpawnThing:
-    lda.l !powerup_flags ; check if mushroom is unlocked
-    and #$01
+    lda.l !powerup_flags
+    and #$01 ; check if mushroom is unlocked
     bne SpawnMushroom
 
 SpawnCoin:

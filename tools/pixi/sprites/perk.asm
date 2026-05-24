@@ -12,6 +12,15 @@ incsrc "../../uberasm/rogue/ram.asm"
 function prop(pal,tile_hi) = ((pal-8)*2)|tile_hi
 ;print "prop: ", hex(prop($0C,1))
 
+print "INIT ",pc
+    jsr init
+rtl
+
+print "MAIN ",pc
+phb : phk : plb
+    jsr main 
+plb : rtl
+
 ; perk pointer table
 perk_table:
     dw jump_ability     ; 00
@@ -29,15 +38,6 @@ perk_table:
 perk_table_end:
 !perk_count = (perk_table_end-perk_table)/2
 print "perk count: ", dec(!perk_count)
-
-print "INIT ",pc
-    jsr init
-rtl
-
-print "MAIN ",pc
-phb : phk : plb
-    jsr main 
-plb : rtl
 
 init:
     ; check if perk is random

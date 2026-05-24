@@ -50,8 +50,8 @@ incsrc question_block_base.asm
 
 ; Code stuff
 SpawnThing:
-    lda.l !powerup_flags ; check if feather is unlocked
-    and #$04
+    lda.l !powerup_flags
+    and #$04 ; check if feather is unlocked
     bne SpawnFeather
 
 SpawnCoin:

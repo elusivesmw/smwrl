@@ -50,8 +50,8 @@ incsrc question_block_base.asm
 
 ; Code stuff
 SpawnThing:
-    lda.l !powerup_flags ; check if flower is unlocked
-    and #$01
+    lda.l !powerup_flags
+    and #$02 ; check if flower is unlocked
     bne SpawnFlower
 
 SpawnCoin:
