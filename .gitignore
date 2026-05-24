@@ -50,6 +50,7 @@ tools/build/*
 
 # exclude sysLMRestore folder
 sysLMRestore/
+*.extmod
 
 # exclude roms and executables
 *.smc
