@@ -136,10 +136,10 @@ rts
 y_offset:
     db 0,0,0,-1,-2,-3,-2,-1
 tile_map:
-    db $80,$82,$84,$86,$88,$8A,$8C,$8E
+    db $80,$82,$84,$86,$42,$88,$24,$8A
     db $A0,$24
 props:
-    db prop($0C,1),prop($0C,1),prop($0C,1),prop($0C,1),prop($0B,1),prop($08,1),prop($0D,1),prop($0A,1)
+    db prop($0C,1),prop($0C,1),prop($0C,1),prop($0C,1),prop($0B,0),prop($08,1),prop($0D,0),prop($0A,1)
     db prop($08,1),prop($0C,0)
 
 sparkle:
