@@ -9,8 +9,9 @@ rom: smw.smc
 
 ; Level resources
 level:
-0FF bonus_level.asm
-100 bonus_level.asm
+;0FF bonus_level.asm
+;100 bonus_level.asm
+001 set_bonus_flag.asm
 
 ; Overworld resources
 overworld:
@@ -18,7 +19,7 @@ overworld:
 ; Game mode resources
 gamemode:
 * retry_gm.asm
-14 rogue_gm14.asm
+;14 rogue_gm14.asm
 
 ; Other code files and free RAM setting.  These don't usually need to be changed.
 global:         other/global_code.asm
