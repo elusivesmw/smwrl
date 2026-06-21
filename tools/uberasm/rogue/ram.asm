@@ -10,7 +10,9 @@
 !powerup_flags          = !rogue_saveram+7 ; format: "---- -Ffm" (F: feather, f: flower, m: mushroom)
 
 !rogue_freeram          = $7FA300
-!debug_out              = !rogue_freeram+0
-!frame_counter          = !rogue_freeram+1
-!perk_num               = !rogue_freeram+2
-!trigger_bonus_game     = !rogue_freeram+3
+!inital_seed            = !rogue_freeram+0 ; 2
+!current_seed           = !rogue_freeram+2 ; 2
+!debug_out              = !rogue_freeram+4
+!frame_counter          = !rogue_freeram+5
+!perk_num               = !rogue_freeram+6
+!trigger_bonus_game     = !rogue_freeram+7
