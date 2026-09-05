@@ -1,3 +1,4 @@
+incsrc "../../uberasm/rogue/ram.asm"
 incsrc "../../uberasm/rogue/random.asm"
 
 init:
