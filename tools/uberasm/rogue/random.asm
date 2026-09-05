@@ -5,7 +5,27 @@
 !seed1_copy = $00
 !seed2_copy = !seed1_copy+1
 !output = !current_seed
-!mutate = $02 ; 00 - immutable, 01 - mutable 
+!mutate = $02 ; 00 - immutable, 01 - mutable
+
+
+GetSubSystemSeed:
+    lda #$00 : sta !mutate ; don't mutate the global seed
+    ; TODO: hash to mix other inputs to define subsystem seed:
+    ; i.e. something to identify system, such as level, or perks
+rtl
+
+GetRandomLevel:
+    lda #$01 : sta !mutate ; mutate non-global seeds
+    ; need output for each system
+    ; ...
+rtl
+
+GetRandomPerk:
+    lda #$01 : sta !mutate ; mutate non-global seeds
+    ; need output for each system
+    ; ...
+rtl
+
 
 ; clobbers $00, $01, and optionally !seed1, !seed2
 ; TODO: dont' clobber !seed1,!seed2
