@@ -12,21 +12,21 @@ generate_system_seeds:
     lda !global_seed+1
     sta !seed2_copy
 
-wdm
+;wdm
     ; order matters
     jsl generate_perk_seed
     jsl generate_level_seed
-    jsl rng
-    jsl rng
-    jsl rng
+    ;jsl rng
+    ;jsl rng
+    ;jsl rng
 
     ; TODO: move elsewhere, testing system independence
     ; order between systems does not matter
-    jsl next_perk
+    ;jsl next_perk
+    ;jsl next_perk
+    ;jsl next_perk
     jsl next_level
-    jsl next_perk
     jsl next_level
-    jsl next_perk
     jsl next_level
 
     ; TODO: hash to mix other inputs to define subsystem seed:

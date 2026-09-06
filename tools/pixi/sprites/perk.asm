@@ -1,5 +1,6 @@
 ; import rogue defines
 incsrc "../../uberasm/rogue/ram.asm"
+incsrc "../../uberasm/rogue/random.asm"
 
 ; config
 !this_sprite_num = $AF
@@ -217,14 +218,10 @@ rts
 ; determine random perk
 ; return perk number in A
 init_random_perk:
-    ; TODO: figure out how to use RNG
-    ;jsl $01ACF9
-    ;lda $148C
-
-    ; janky frame counter/sprite slot based RNG for now...
-    lda $7fA300 ; retry resets frame counter $13 so we can't use that
-    stx $00
-    eor $00 ; eor with X so all aren't the same
+wdm
+    jsl next_perk
+    lda !perk_seed   ; low byte
+    eor !perk_seed+1 ; high byte
 -
     sec : sbc.b #!perk_count
     cmp.b #!perk_count : bcs -
