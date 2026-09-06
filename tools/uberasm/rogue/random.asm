@@ -13,12 +13,22 @@ generate_system_seeds:
     sta !seed2_copy
 
 wdm
+    ; order matters
     jsl generate_perk_seed
     jsl generate_level_seed
     jsl GetRand
     jsl GetRand
     jsl GetRand
-    
+
+    ; TODO: move elsewhere, testing system independence
+    ; order between systems does not matter
+    jsl next_perk
+    jsl next_level
+    jsl next_perk
+    jsl next_level
+    jsl next_perk
+    jsl next_level
+
     ; TODO: hash to mix other inputs to define subsystem seed:
     ; i.e. something to identify system, such as level, or perks
 rtl
@@ -31,12 +41,30 @@ generate_perk_seed:
     ; ...
 rtl
 
+next_perk:
+    lda !perk_seed : sta !seed1_copy
+    lda !perk_seed+1 : sta !seed2_copy
+    jsl GetRand
+    ; update perk seed
+    lda !seed1_copy : sta !perk_seed
+    lda !seed2_copy : sta !perk_seed+1
+rtl
+
 generate_level_seed:
     jsl GetRand
     ; need output for each system
     lda !output : sta !level_seed
     lda !output+1 : sta !level_seed+1
     ; ...
+rtl
+
+next_level:
+    lda !level_seed : sta !seed1_copy
+    lda !level_seed+1 : sta !seed2_copy
+    jsl GetRand
+    ; update perk seed
+    lda !seed1_copy : sta !level_seed
+    lda !seed2_copy : sta !level_seed+1
 rtl
 
 ; clobbers $00, $01
