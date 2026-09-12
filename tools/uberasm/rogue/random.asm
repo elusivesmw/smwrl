@@ -4,7 +4,7 @@
 !seed2_copy = !seed1_copy+1
 !output = $02 ; 2 bytes
 
-
+; NOTE: make sure to call retry_api_save_game after calling this
 generate_system_seeds:
     ; make a copy because we never modify the global seed
     lda !global_seed
@@ -12,8 +12,9 @@ generate_system_seeds:
     lda !global_seed+1
     sta !seed2_copy
 
-;wdm
-    ; order matters
+    ; NOTE: the order matters here.
+    ; generating system seeds in a specific order rather than using a hash to mix in other inputs
+    ; means that the order can never be modified (only appended to) without altering the subsequent systems.
     jsl generate_perk_seed
     jsl generate_level_seed
     ;jsl rng
@@ -28,9 +29,6 @@ generate_system_seeds:
     jsl next_level
     jsl next_level
     jsl next_level
-
-    ; TODO: hash to mix other inputs to define subsystem seed:
-    ; i.e. something to identify system, such as level, or perks
 rtl
 
 generate_perk_seed:
@@ -42,6 +40,9 @@ generate_perk_seed:
 rtl
 
 next_perk:
+    ; NOTE these are currently saved directly to the address that saves to sram,
+    ; but it should use !current_perk_seed and copy to !perk_seed only at specific times,
+    ; so as not to save prematurely
     lda !perk_seed : sta !seed1_copy
     lda !perk_seed+1 : sta !seed2_copy
     jsl rng 
@@ -59,6 +60,9 @@ generate_level_seed:
 rtl
 
 next_level:
+    ; NOTE these are currently saved directly to the address that saves to sram,
+    ; but it should use !current_perk_seed and copy to !perk_seed only at specific times,
+    ; so as not to save prematurely
     lda !level_seed : sta !seed1_copy
     lda !level_seed+1 : sta !seed2_copy
     jsl rng 
@@ -80,7 +84,7 @@ rtl                             ;$01AD06    |
 ; INPUT:
 ;   X, index of output byte
 ; OUTPUT:
-;   random numbers in !output and !output+1
+;   random numbers in !output,x
 byte_rng:
     lda !seed1_copy             ;$01AD07    |\ 
     asl                         ;$01AD0A    ||
