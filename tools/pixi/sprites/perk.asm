@@ -220,6 +220,7 @@ rts
 init_random_perk:
 wdm
     jsl next_perk
+    ; mix the two bytes, but we could just as well take the low or high alone
     lda !perk_seed   ; low byte
     eor !perk_seed+1 ; high byte
 -

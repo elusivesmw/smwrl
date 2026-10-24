@@ -12,22 +12,22 @@ generate_system_seeds:
     lda !global_seed+1
     sta !seed2_copy
 
-    ; NOTE: the order matters here.
+    ; NOTE: the order matters here
     ; generating system seeds in a specific order rather than using a hash to mix in other inputs
     ; means that the order can never be modified (only appended to) without altering the subsequent systems.
     jsl generate_perk_seed
     jsl generate_level_seed
-    ;jsl rng
-    ;jsl rng
-    ;jsl rng
+    ; jsl generate_<future_system>_seed
 
-    ; TODO: move elsewhere, testing system independence
+    ; NOTE: rng systems are independent
     ; order between systems does not matter
-    ;jsl next_perk
-    ;jsl next_perk
-    ;jsl next_perk
-    jsl next_level
-    jsl next_level
+    ; e.g.:
+    ; jsl next_perk : jsl next_perk : jsl next_level
+    ; vs.
+    ; jsl next_perk : jsl next_level : jsl next_perk
+    ; yield the same results
+
+    ; NOTE: next_level is a currently unused RNG system, but it will be used to generate level randomness
     jsl next_level
 rtl
 
@@ -40,7 +40,7 @@ generate_perk_seed:
 rtl
 
 next_perk:
-    ; NOTE these are currently saved directly to the address that saves to sram,
+    ; NOTE: these are currently saved directly to the address that saves to sram,
     ; but it should use !current_perk_seed and copy to !perk_seed only at specific times,
     ; so as not to save prematurely
     lda !perk_seed : sta !seed1_copy
@@ -60,7 +60,7 @@ generate_level_seed:
 rtl
 
 next_level:
-    ; NOTE these are currently saved directly to the address that saves to sram,
+    ; NOTE: these are currently saved directly to the address that saves to sram,
     ; but it should use !current_perk_seed and copy to !perk_seed only at specific times,
     ; so as not to save prematurely
     lda !level_seed : sta !seed1_copy
@@ -109,7 +109,7 @@ byte_rng:
 rtl                             ;$01AD2F    |
 
 
-; compare to vanilla
+; NOTE: here just to compare behavior to vanilla
 vanilla_get_rand:
     lda !global_seed
     sta $148B
