@@ -15,7 +15,5 @@ init:
 rtl
 
 main:
-    ; increment frame counter (not reset by retry)
-    lda !frame_counter : inc
-    sta !frame_counter
+
 rtl

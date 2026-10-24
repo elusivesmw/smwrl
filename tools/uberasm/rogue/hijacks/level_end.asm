@@ -1,6 +1,3 @@
-!freeram = $7FA300
-!trigger_bonus_game = !freeram+3
-
 pushpc
 
 ; disable showing bonus stars

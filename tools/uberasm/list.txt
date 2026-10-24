@@ -9,6 +9,7 @@ rom: smw.smc
 
 ; Level resources
 level:
+01  test.asm
 0FF bonus_level.asm
 100 bonus_level.asm
 

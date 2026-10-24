@@ -13,6 +13,9 @@ endmacro
 ; load level asm
 %incsrc("", level)
 
+; load custom rng routine
+%incsrc("", random)
+
 ; load hijacks
 ; WARNING: this uberasm is no longer safe to apply to the source rom (levels.smc)
 ; it should only be applied to the copied rom (patched.smc)
